@@ -1,0 +1,6 @@
+HOSTNAME = cmp123
+HOSTTYPE = x86_64
+Time is Mon Mar 2 11:13:49 CET 2026
+Directory is /scratch/haly/sph/tutor_TAS/flyby/prograde
+starting phantom run...
+writing output to prograde02.log
