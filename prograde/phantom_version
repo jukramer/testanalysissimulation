@@ -1,0 +1,17 @@
+Compilation details:
+   Date compiled: Fri Feb 27 16:42:56 CET 2026
+   Pre-processor flags used: -DISOTHERMAL -DDUST -DDISC_VISCOSITY -DIND_TIMESTEPS
+ 
+Version details:
+   Date this version was committed to the repository:    Tue Nov 28 05:51:49 2023 +1100
+   Commit tag:     v2023.0.0-3449-g32649c6e
+   Full commit ID: 32649c6efb38daaef1980f8117fcfb091c9c283f 
+   Locally modified files:
+build/Makefile
+build/Makefile_qscripts
+build/Makefile_setups
+src/main/dust.f90
+src/setup/set_disc.F90
+src/setup/setup_disc.f90
+src/utils/moddump_disc.f90
+src/utils/moddump_dustadd.f90
