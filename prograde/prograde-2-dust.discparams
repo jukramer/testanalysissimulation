@@ -1,0 +1,33 @@
+
+# dust disc parameters - this file is NOT read by setup
+                R_in =         10.    ! inner disc boundary
+               R_ref =         10.    ! reference radius
+               R_out =        150.    ! outer disc boundary
+              H/R_in =       0.050    ! disc aspect ratio H/R at R=R_in
+             H/R_ref =       0.050    ! disc aspect ratio H/R at R=R_ref
+             H/R_out =  0.0983994835633  ! disc aspect ratio H/R at R=R_out
+              sig_in =       0.000    ! surface density (g/cm^2) at R=R_in
+             sig_ref =       0.000    ! surface density (g/cm^2) at R=R_ref
+             sig_out =  0.004236886992  ! surface density (g/cm^2) at R=R_out
+             sig_max =  0.0126924886014  ! maximum surface density (g/cm^2)
+                Qmin =  2920.16222    ! minimum Toomre Q parameter
+                   n =       25000    ! number of particles in the disc
+             p_index =       1.000    ! power law index of surface density profile
+             q_index =       0.250    ! power law index of sound speed profile
+              M_star =       1.000    ! mass of central star
+              M_disc =   5.000E-05    ! disc mass
+       M_disc/M_star =   5.000E-05    ! relative disc mass
+             inc.deg =       0.000    ! disc inclination in degrees
+               <h/H> =  0.600972027  ! approx. mean smoothing length over disc scale height
+         alphaSS_min =       0.000    ! minimum Shakura-Sunyaev alpha viscosity in disc
+         alphaSS_max =  0.108798332  ! maximum Shakura-Sunyaev alpha viscosity in disc
+               udist =   1.496E+13    ! distance units (cgs)
+               umass =   1.989E+33    ! mass units (cgs)
+               utime =   5.023E+06    ! time units (cgs)
+                   G =       1.000    ! in code units
+                   c =   1.007E+04    ! in code units
+
+# Surface density      =  8.57E-02 g/cm^2 (R/ 10.0)^(-1.0) (1 - sqrt(10.0/R))
+
+# Disc total angular momentum =  8.06E+50 g*cm^2/sec
+

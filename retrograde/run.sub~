@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+#SBATCH --job-name="retrograde"
+#SBATCH --partition=compute
+#SBATCH --time=50:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=32
+#SBATCH --mem-per-cpu=1G
+#SBATCH --account=research-ae-spe 
+#SBATCH --output=retrograde.in.qout
+echo "HOSTNAME = $HOSTNAME"
+echo "HOSTTYPE = $HOSTTYPE"
+echo Time is `date`
+echo Directory is `pwd`
+
+ulimit -s unlimited
+export OMP_SCHEDULE="dynamic"
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_STACKSIZE=1024m
+
+
+echo "starting phantom run..."
+export outfile=`grep logfile "retrograde.in" | sed "s/logfile =//g" | sed "s/\\!.*//g" | sed "s/\s//g"`
+echo "writing output to $outfile"
+./phantom retrograde.in >& $outfile

@@ -1,0 +1,76 @@
+# input file for disc setup routine
+
+# resolution
+                  np =      250000    ! number of gas particles
+            np_dust1 =       25000    ! number of large dust particles
+            np_dust2 =       25000    ! number of large dust particles
+
+# units
+           dist_unit =          au    ! distance unit (e.g. au,pc,kpc,0.1pc)
+           mass_unit =      solarm    ! mass unit (e.g. solarm,jupiterm,earthm)
+
+# central object(s)/potential
+            icentral =           1    ! use sink particles or external potential (0=potential,1=sinks)
+              nsinks =           2    ! number of sinks
+             ibinary =           1    ! binary orbit (0=bound,1=unbound [flyby])
+
+# options for central star
+                  m1 =       1.000    ! central star mass
+               accr1 =         10.    ! central star accretion radius
+
+# options for perturber
+                  m2 =       1.000    ! perturber mass
+               accr2 =       5.000    ! perturber accretion radius
+             flyby_a =       262.5    ! distance of minimum approach
+             flyby_d =         10.    ! initial distance (units of dist. min. approach)
+             flyby_O =       0.000    ! position angle of ascending node (deg)
+             flyby_i =       0.000    ! inclination (deg)
+
+# oblateness
+            J2_body1 =       0.000    ! J2 moment (oblateness)
+            J2_body2 =       0.000    ! J2 moment (oblateness)
+
+# options for multiple discs
+      use_binarydisc =           F    ! setup circumbinary disc
+     use_primarydisc =           T    ! setup circumprimary disc
+   use_secondarydisc =           F    ! setup circumsecondary disc
+      use_global_iso =           F    ! globally isothermal or Farris et al. (2014)
+
+# options for circum-primary gas disc
+      isetgasprimary =           0    ! how to set gas density profile (0=total disc mass,1=mass within annulus,2=surface density normalisation,3=surface density at reference radius,4=minimum Toomre Q)
+    itapergasprimary =           F    ! exponentially taper the outer disc profile
+   ismoothgasprimary =           T    ! smooth inner disc
+        iwarpprimary =           F    ! warp disc
+         R_inprimary =         10.    ! inner radius
+        R_refprimary =         10.    ! reference radius
+        R_outprimary =        150.    ! outer radius
+       disc_mprimary =       0.010    ! disc mass
+       pindexprimary =       1.000    ! power law index of surface density sig=sig0*r^-p
+       qindexprimary =       0.250    ! power law index of sound speed cs=cs0*r^-q
+      posanglprimary =       0.000    ! position angle (deg)
+         inclprimary =         30.    ! inclination (deg)
+          H_Rprimary =       0.050    ! H/R at R=R_ref
+             alphaSS =       0.005    ! desired alphaSS
+
+# options for dust
+         dust_method =           2    ! dust method (1=one fluid,2=two fluid,3=Hybrid)
+         dust_to_gas =       0.010    ! dust to gas ratio
+       ndusttypesinp =           2    ! number of grain sizes
+          igrainsize =           1    ! grain size distribution (0=log-space,1=manually)
+       grainsizeinp1 =       3.000    ! grain size1 (in cm)
+       grainsizeinp2 =       0.300    ! grain size2 (in cm)
+        dustbinfrac1 =       0.500    ! dust bin fraction1 (frac. of total dust)
+        dustbinfrac2 =       0.500    ! dust bin fraction2 (frac. of total dust)
+          igraindens =           0    ! grain density input (0=equal,1=manually)
+        graindensinp =       3.000    ! intrinsic grain density (in g/cm^3)
+            isetdust =           0    ! how to set dust density profile (0=equal to gas,1=custom,2=equal to gas with cutoffs)
+
+# set planets
+            nplanets =           0    ! number of planets
+
+# thermal stratification
+           discstrat =           0    ! stratify disc? (0=no,1=yes)
+
+# timestepping
+             norbits =           1    ! maximum number of orbits at outer disc
+              deltat =       0.050    ! output interval as fraction of orbital period
