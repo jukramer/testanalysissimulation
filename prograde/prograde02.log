@@ -1,0 +1,275 @@
+ MPI parallelisation is OFF
+
+  _ \  |                 |                    ___|   _ \  |   |
+ |   | __ \   _` | __ \  __|  _ \  __ `__ \ \___ \  |   | |   |
+ ___/  | | | (   | |   | |   (   | |   |   |      | ___/  ___ |
+_|    _| |_|\__,_|_|  _|\__|\___/ _|  _|  _|_____/ _|    _|  _|
+              ___                         , _               
+ |)          (|  \  _,        o  _ |\    /|/ \ ,_  o  _   _ 
+ |/\_|  |     |   |/ |  /|/|  | |/ |/     |__//  | | /   |/ 
+  \/  \/|/   (\__/ \/|_/ | |_/|/|_/|_/    |      |/|/\__/|_/
+       (|                                                   
+
+ Version: 2023.0.0
+ Compilation details:
+    Date compiled: Fri Feb 27 16:42:56 CET 2026
+    Pre-processor flags used: -DISOTHERMAL -DDUST -DDISC_VISCOSITY -DIND_TIMESTEPS
+ 
+ Version details:
+    Date this version was committed to the repository:    Tue Nov 28 05:51:49 2023 +1100
+    Commit tag:     v2023.0.0-3449-g32649c6e
+    Full commit ID: 32649c6efb38daaef1980f8117fcfb091c9c283f
+    Locally modified files:
+       build/Makefile                  build/Makefile_qscripts         build/Makefile_setups
+       src/main/dust.f90               src/setup/set_disc.F90          src/setup/setup_disc.f90
+       src/utils/moddump_disc.f90      src/utils/moddump_dustadd.f90
+ 
+ Using NATIVE inverse sqrt
+
+ Running on Intel(R) Xeon(R) Gold 6248R CPU @ 3.00GHz
+  48 cpus @  4.00 Ghz, cache size 36608 KB
+ Running in openMP on  32 threads
+ starting run prograde.in
+ Started on 02/03/2026 at 11:13:50.0
+
+ Read input from   : prograde.in
+ Writing energy to : prograde02.ev
+ Writing log to    : prograde02.log
+
+
+# job name
+             logfile =  prograde02.log   ! file to which output is directed
+            dumpfile =  prograde_00010   ! dump file to start from
+
+# options controlling run time and input/output
+                tmax =   1.021E+05    ! end time
+               dtmax =   5103.5833    ! time between dumps
+                nmax =          -1    ! maximum number of timesteps (0=just get derivs and stop)
+                nout =          -1    ! write dumpfile every n dtmax (-ve=ignore)
+           nmaxdumps =          -1    ! stop after n full dumps (-ve=ignore)
+            twallmax =      000:00    ! maximum wall time (hhh:mm, 000:00=ignore)
+           dtwallmax =      024:00    ! maximum wall time between dumps (hhh:mm, 000:00=ignore)
+           nfulldump =          10    ! full dump every n dumps
+            iverbose =           0    ! verboseness of log (-1=quiet 0=default 1=allsteps 2=debug 5=max)
+
+# options controlling accuracy
+              C_cour =       0.300    ! Courant number
+             C_force =       0.250    ! dt_force number
+                tolv =   1.000E-02    ! tolerance on v iterations in timestepping
+               hfact =       1.000    ! h in units of particle spacing [h = hfact(m/rho)^(1/3)]
+                tolh =   1.000E-04    ! tolerance on h-rho iterations
+
+# options controlling hydrodynamics, shock capturing
+               alpha =  0.164599504  ! shock viscosity parameter
+                beta =       2.000    ! beta viscosity
+
+# options controlling damping
+               idamp =           0    ! artificial damping of velocities (0=off, 1=constant, 2=star, 3=disc)
+
+# options controlling equation of state
+                ieos =           6    ! eqn of state (1=isoth;2=adiab;3=locally iso;8=barotropic)
+                  mu =       2.381    ! mean molecular weight
+
+# options relating to external forces
+      iexternalforce =           0    ! 1=star,2=coro,3=bina,4=prdr,5=toru,6=toys,7=exte,8=spir,9=Lens,10=dens,11=Eins,
+
+# options controlling physical viscosity
+           irealvisc =           0    ! physical viscosity type (0=none,1=const,2=Shakura/Sunyaev)
+          shearparam =       0.100    ! magnitude of shear viscosity (irealvisc=1) or alpha_SS (irealvisc=2)
+            bulkvisc =       0.000    ! magnitude of bulk viscosity
+
+# options controlling dust
+               idrag =           1    ! gas/dust drag (0=off,1=Epstein/Stokes,2=const K,3=const ts)
+           grainsize =       0.100    ! Grain size in cm
+           graindens =       3.000    ! Intrinsic grain density in g/cm^3
+              irecon =           1    ! use reconstruction in gas/dust drag (-1=off,0=no slope limiter,1=van leer MC)
+   icut_backreaction =           0    ! cut the drag on the gas phase (0=no, 1=yes)
+
+# options for injecting/removing particles
+               rkill =      -1.000    ! deactivate particles outside this radius (<0 is off)
+
+# gravitational waves
+                  gw =           F    ! calculate gravitational wave strain
+
+ >>> reading setup from file: prograde_00010 on unit   9
+ FT:Phantom:2023.0.0:32649c6 (hydro+dust): 01/03/2026 09:52:29.3
+ n(gas) =       250000
+ n(dust1) =        25000
+ n(dust2) =        25000
+ npart =       300000
+ npart(total) =                300000
+ setting isothermal sound speed^2 (polyk) =    7.9056941504209463E-004  gamma =    1.0000000000000000     
+ qfacdisc =   0.25000000000000000     
+ time =    51035.832999999999     
+
+--> ALLOCATING ALL ARRAYS
+------------------------------------------------------------
+ Total memory allocated to arrays:  499.523 MB n =       300000
+------------------------------------------------------------
+ reading particles          1:    300000, from block     1 lims=         1-    300000
+ got   19 sink properties from    2 sink particles
+ ----------------------------------------------------------
+ ID| Mass     | Racc     | Macc     | hsoft    | Lsink    |
+ ----------------------------------------------------------
+  1|  1.0     |  10.     | 5.01E-04 |  0.0     |  0.0     |
+  2|  1.0     |  5.0     | 7.34E-05 |  0.0     |  0.0     |
+ ----------------------------------------------------------
+ <<< finished reading (hydro) file 
+
+ Centre of mass is at (x,y,z) = ( 8.353E-06,  2.508E-05, -6.550E-07)
+ Particle setup OK
+ npart total   =       300000
+ nptmass       =            2
+ dt(sink-sink) =    52.798499002262488     
+ dt(sink-gas)  =   0.12184768989520058     
+
+ Number of particles =       300000
+ Number & mass of gas     particles:       250000,   4.000000E-08
+ Number & mass of dust    particles:        25000,   2.000000E-09
+ Number & mass of dust    particles:        25000,   2.000000E-09
+ 
+ No boundaries set 
+
+ Using M_6 quintic kernel
+       h =  1.00*[ 4.00E-08/rho]^(1/3); htol =  1.00E-04
+       Number of neighbours =  113
+ Two-fluid dust explicit scheme is ON
+ Cooling is explicitly calculated in force
+
+ Locally (on sink  1) isothermal eos (R_sph): cs^2_0 =   0.000791 qfac =   0.250000
+
+ Artificial viscosity                       : alpha  =   0.164600
+
+ Using Epstein/Stokes drag with constant grain size: 
+        Grain size =   3.00     cm     =  2.005E-13 (code units)
+        Grain mass =   339.     g      =  1.706E-31 (code units)
+     Grain density =   3.00     g/cm^3 =  5.050E+06 (code units)
+  Gas mfp at rho=1 =   695.     cm     =  2.760E-17 (code units)
+
+ Density above which Stokes drag is used:
+           rhocrit =  1.840E-10 g/cm^3 =  3.096E-04 (code units)
+        Grain size =  0.300     cm     =  2.005E-14 (code units)
+        Grain mass =  0.339     g      =  1.706E-34 (code units)
+     Grain density =   3.00     g/cm^3 =  5.050E+06 (code units)
+  Gas mfp at rho=1 =   695.     cm     =  2.760E-17 (code units)
+
+ Density above which Stokes drag is used:
+           rhocrit =  1.840E-09 g/cm^3 =  3.096E-03 (code units)
+
+ --- code units --- 
+
+     Mass:  1.989E+33 g       Length:  1.496E+13 cm    Time:  5.023E+06 s
+  Density:  5.941E-07 g/cm^3  Energy:  1.765E+46 erg   En/m:  8.871E+12 erg/g
+ Velocity:  2.978E+06 cm/s    Bfield:  8.138E+03 G  opacity:  1.125E-07 cm^2/g
+        G:  1.000E+00              c:  1.007E+04       mu_0:  1.000E+00
+        a:  1.435E-21          kB/mH:  9.305E-06
+
+ npart=    300000, n_alive=    285623, n_dead_or_accreted=     14377, nptmass=         2
+ Etot= 1.117E-03, Ekin= 3.935E-03, Etherm= 1.186E-03, Epot=-4.003E-03
+ Linm= 1.874E-09, Angm= 1.638E+01
+ Centre of Mass =  8.353E-06,  2.508E-05, -6.550E-07
+ density  (max)= 3.499E-06 (mean)= 1.436E-08 (max)= 2.079E-12 g/cm^3
+ Mgas =  9.426E-03
+ Mdust1 =  4.998E-05
+ Mdust2 =  4.999E-05
+ RMS Mach #= 1.547E+01
+
+
+ Initial dust1 mass:           5.000000E-05
+ Initial dust2 mass:           5.000000E-05
+ Initial total dust mass:      1.000000E-04
+> step 8192 / 65536 t = 51673.78 dt = 0.078 moved 285333 in 35 cpu-s < | np = 300000 |
+> step 32768 / 131072 t = 52311.73 dt = 0.039 moved 284982 in 36 cpu-s <
+> step 49152 / 131072 t = 52949.68 dt = 0.039 moved 284582 in 26 cpu-s <
+> step 32768 / 65536 t = 53587.62 dt = 0.078 moved 284179 in 36 cpu-s <
+> step 40960 / 65536 t = 54225.57 dt = 0.078 moved 283807 in 26 cpu-s <
+> step 49152 / 65536 t = 54863.52 dt = 0.078 moved 283388 in 34 cpu-s <
+> step 57344 / 65536 t = 55501.47 dt = 0.078 moved 283043 in 34 cpu-s <
+> step 65536 / 65536 t = 56139.42 dt = 0.078 moved 282773 in 35 cpu-s <
+
+
+-------->   TIME =   0.5614E+05: small dump written to file prograde_00011   <--------
+
+ Since code start: 82656 timesteps, wall: 1.00E+05s cpu: 2.83E+06s cpu/wall: 28
+ Since last dump : 82656 timesteps, wall: 5.18E+04s cpu: 1.46E+06s cpu/wall: 28
+
+                           wall         cpu  cpu/wall  load bal      frac
+ ├─step             :    14.38h     406.18h     28.25   100.00%    99.70%
+ │ ├─tree           :     4.57h     119.11h     26.09   100.00%    31.66%
+ │ ├─density        :     1.99h      57.90h     29.12   100.00%    13.79%
+ │ │ ├─local        :     1.77h      52.24h     29.43   100.00%    12.31%
+ │ │ └─remote       :     0.06h       1.54h     26.17   100.00%     0.41%
+ │ ├─force          :     6.50h     194.50h     29.92   100.00%    45.07%
+ │ │ ├─local        :     6.30h     189.32h     30.03   100.00%    43.71%
+ │ │ └─remote       :     0.06h       1.63h     26.40   100.00%     0.43%
+ │ ├─cons2prim      :     0.15h       3.79h     25.25   100.00%     1.04%
+ │ └─extf           :     0.73h      19.13h     26.21   100.00%     5.06%
+ ├─write_ev         :     0.04h       1.06h     24.81   100.00%     0.30%
+ └─write_dump       :     0.00h       0.00h      0.80   100.00%     0.00%
+------------------------------------------------------------------------------
+|** Number of steps since last summary:                  82656             **|
+|** Wall time since last summary:                       14.379 hours       **|
+------------------------------------------------------------------------------
+|* force: timesteps constraining dt compared to Courant by factor of:       *|
+| dt                 |  #times     | mean # part | mean fac    | max fac     |
+| dtforce (gas)      |        41320|       266.82|         1.27|         1.85|
+| dtdrag (gas)       |         9509|        29.92|         1.13|         1.98|
+| dtdrag (dust)      |        36346|         5.40|         3.91|        11.35|
+------------------------------------------------------------------------------
+|* force: Dust warnings                                                     *|
+|         |  #times  | mean # part |  mean fac   |   max fac                 |
+| h>cs*ts |     41327|     23333.15|         1.90|        36.28              |
+------------------------------------------------------------------------------
+|* particles woken                                                          *|
+| #steps  | mean # part/step |  max # part/step                              |
+|    73804|            117.26|            68015                              |
+------------------------------------------------------------------------------
+|* ptmass: number of accreted particles                                     *|
+| sink no |  # steps | max # acc  | total # | # unconditionally              |
+|         |  w/ acc  | per step   | accreted| accreted                       |
+|        1|      1426|           2|     1442|       43                       |
+|        2|      1386|           2|     1408|      311                       |
+------------------------------------------------------------------------------
+|* ptmass: particles within hacc that failed to accrete                     *|
+| # sinks | # steps  | max # fails| total #                                  |
+|         | w/ fails | per step   | fails                                    |
+|        2|     71341|           7|   149303                                 |
+------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+| bin |    dt    | n(gas)   | n(dust)  | n(dust)  |    npart |   frac  | cpufrac |
+----------------------------------------------------------------------------------
+|  0    5.104E+03          0          0          0          0    0.00%     0.00% |
+|  1    2.552E+03          0          0          0          0    0.00%     0.00% |
+|  2    1.276E+03          0          0          0          0    0.00%     0.01% |
+|  3    6.379E+02          0          0          0          0    0.00%     0.01% |
+|  4    3.190E+02          0          0          0          0    0.00%     0.02% |
+|  5    1.595E+02          0          0          0          0    0.00%     0.04% |
+|  6    7.974E+01          0          0          0          0    0.00%     0.08% |
+|  7    3.987E+01          0          0          0          0    0.00%     0.16% |
+|  8    1.994E+01          0          0          0          0    0.00%     0.30% |
+|  9    9.968E+00          0          0          0          0    0.00%     0.61% |
+| 10    4.984E+00        129          0          0        129    0.05%     1.20% |
+| 11    2.492E+00       1251          0          0       1251    0.44%     2.43% |
+| 12    1.246E+00       2066          0          0       2066    0.73%     4.84% |
+| 13    6.230E-01      11088        131          0      11219    3.97%     9.37% |
+| 14    3.115E-01      21790       1031          8      22829    8.07%    17.90% |
+| 15    1.557E-01     196537      23754      24569     244860   86.59%    32.07% |
+| 16    7.787E-02          0          0        419        419    0.15%    30.97% |
+----------------------------------------------------------------------------------
+ 0.18M particles per second, IND TIMESTEPS efficiency: 78.99%
+
+ npart=    300000, n_alive=    282773, n_dead_or_accreted=     17227, nptmass=         2
+ Etot= 1.107E-03, Ekin= 2.118E-03, Etherm= 1.186E-03, Epot=-2.197E-03
+ Linm= 1.997E-09, Angm= 1.638E+01
+ Centre of Mass =  1.028E-05,  2.940E-05,  7.325E-07
+ density  (max)= 4.990E-06 (mean)= 2.629E-08 (max)= 2.964E-12 g/cm^3
+ Mgas =  9.314E-03
+ Mdust1 =  4.983E-05
+ Mdust2 =  4.999E-05
+ RMS Mach #= 1.569E+01
+
+
+> step 16384 / 131072 t = 56777.36 dt = 0.039 moved 282517 in 26 cpu-s <
+> step 32768 / 131072 t = 57415.31 dt = 0.039 moved 282254 in 33 cpu-s <
+> step 49152 / 131072 t = 58053.26 dt = 0.039 moved 281992 in 33 cpu-s <
+> step 32768 / 65536 t = 58691.21 dt = 0.078 moved 281736 in 33 cpu-s <
