@@ -1,4 +1,7 @@
-if __name__ == '__main__':
-    pass
+import numpy as np
+import pandas as pd
 
-print("hello")
+
+if __name__ == '__main__':
+    data = np.fromfile("")
+    
