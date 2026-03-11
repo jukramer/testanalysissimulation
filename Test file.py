@@ -31,4 +31,6 @@ ax = sdf[sdf.itype == 1].render('rho', xlim=(x1 -100, x2 + 100), ylim=(y1 -100, 
 ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
 ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
 
+# For next session see if it is possible to have the heatmap be blue
+
 plt.show()
