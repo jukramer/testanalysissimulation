@@ -15,12 +15,15 @@ print(sdf_sinks)
 
 sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
 sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
+sdf['z'] = sdf['z'] - sdf_sinks.at[0, 'z']
 
 sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x'] 
 sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y'] 
+sdf_sinks.at[1, 'z'] = sdf_sinks.at[1, 'z'] - sdf_sinks.at[0, 'z']
 
 sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
 sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y'] 
+sdf_sinks.at[0, 'z'] = sdf_sinks.at[0, 'z'] - sdf_sinks.at[0, 'z']
 
 #Creating dots for sink particles
 
@@ -41,7 +44,7 @@ plt.style.use('dark_background')
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True, xsec=0.00)
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True)
 
-# ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True)
+#ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True)
 ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00)
 
 # Sink particles visualisation
