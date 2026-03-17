@@ -14,3 +14,5 @@ sdf.calc_density()
 
 ax = sdf[sdf.itype == 1].render('rho', xlim=(-820, -650), ylim=(1000, 1170), log_scale=True, xsec=0.0)
 plt.show()
+
+#TODO fix
