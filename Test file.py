@@ -2,6 +2,7 @@ import sarracen
 import pandas
 import matplotlib.pyplot as plt
 
+SECTIONAL_VIEW = False
 
 sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
 
@@ -44,8 +45,10 @@ plt.style.use('dark_background')
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True, xsec=0.00)
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True)
 
-#ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True)
-ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00)
+if SECTIONAL_VIEW:
+    ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00)
+else:
+    ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True)
 
 # Sink particles visualisation
 ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
