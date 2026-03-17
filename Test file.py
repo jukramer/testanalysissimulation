@@ -47,19 +47,26 @@ print(sdf_sinks)
 # column integrated view
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True,cmap = 'bone')
 
-# sectional view at z = 0 , for sdf.itype, 1 = gas, 7 = dust (stokes = 10), 8 = dust (stokes = 1)
-#ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'bone')
-ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'hot', alpha = 0.5)
-sdf[sdf.itype == 8].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'Wistia', ax = ax, alpha = 0.5)
-
-
-
 # Sink particles visualisation
-ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
-ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
+def plot_sinks(ax):
+    ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
+    ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
+
+# sectional view at z = 0 , for sdf.itype, 1 = gas, 7 = dust (stokes = 10), 8 = dust (stokes = 1)
+ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'bone')
+ax_1.set_title("Gas Distribution in Disc")
+plot_sinks(ax_1)
+plt.show()
+
+ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'gray', alpha = 0.6)
+sdf[sdf.itype == 8].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'gist_heat', ax = ax_2, alpha = 0.8)
+ax_2.set_title("Dust Distribution in Disc")
+plot_sinks(ax_2)
+plt.show()
+
 
 # TODO See if it is possible to have the heatmap be blue --> didn't find exact colour but picked another one
 # TODO Centering accretion disc and moving all dust with it
 # TODO Work on radial binning analysis
 
-plt.show()
+
