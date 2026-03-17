@@ -1,6 +1,7 @@
 import sarracen
 import pandas
 import matplotlib.pyplot as plt
+from matplotlib import colormaps as cmap
 
 
 sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
@@ -34,27 +35,30 @@ y_sink_1 = sdf_sinks.at[1, 'y']
 print(sdf)
 print(sdf_sinks)
 
-plt.style.use('dark_background')
+# plt.style.use('dark_background')
 
 # Below one is not a sectional view
 
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True, xsec=0.00)
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True)
 
-# for sdf.itype, 1 = gas, 7 = dust species A, 8 = dust species B
+
 
 # column integrated view
-# ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True)
+# ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True,cmap = 'bone')
 
-# sectional view at z = 0
-ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00)
+# sectional view at z = 0 , for sdf.itype, 1 = gas, 7 = dust (stokes = 10), 8 = dust (stokes = 1)
+#ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'bone')
+ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'hot', alpha = 0.5)
+sdf[sdf.itype == 8].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'Wistia', ax = ax, alpha = 0.5)
+
 
 
 # Sink particles visualisation
 ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
 ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
 
-# TODO See if it is possible to have the heatmap be blue
+# TODO See if it is possible to have the heatmap be blue --> didn't find exact colour but picked another one
 # TODO Centering accretion disc and moving all dust with it
 # TODO Work on radial binning analysis
 
