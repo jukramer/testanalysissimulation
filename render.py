@@ -3,7 +3,6 @@ import sarracen
 import matplotlib.pyplot as plt
 
 
-
 def render(filename, limits=400, itype=1, sectionview=False):
     """
     Limits show limits of plot, itype refers to gas / dust / dust and finally sectionview enables for a column density or
@@ -38,6 +37,7 @@ def render(filename, limits=400, itype=1, sectionview=False):
 
     ax.set_xlim([-limits, limits])
     ax.set_ylim([-limits, limits]) 
+    
     return plt
 
 # Testing function

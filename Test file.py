@@ -11,7 +11,6 @@ sdf.calc_density()
 #print(sdf_sinks)
 # print(sdf['itype'].value_counts())
 
-
 sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
 sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
 sdf['z'] = sdf['z'] - sdf_sinks.at[0, 'z']
@@ -69,6 +68,7 @@ if SECTIONAL_VIEW:
     ax_2.set_title("Dust Distribution in Disc")
     plot_sinks(ax_2)
     plt.show()
+    
 else:
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
                                       cmap='bone')
