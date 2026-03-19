@@ -80,8 +80,11 @@ if __name__ == '__main__':
     sdfDust1 = sdfGrouped.get_group(7)
     sdfDust2 = sdfGrouped.get_group(8)
     
-    rVals, sigVals = sigma(sdfGas, 100, 10, 100)
+    rVals, sigVals = sigma(sdfGas, 100, 10, 150)
     plt.plot(rVals[:-1], sigVals)
+    plt.title('Radial Binning Analysis')
+    plt.xlabel ('Radius [AU]')
+    plt.ylabel ('Surface density [kg/m^2]')
     plt.show()
     
     
