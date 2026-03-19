@@ -40,27 +40,46 @@ plt.style.use('dark_background')
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True, xsec=0.00)
 # ax = sdf[sdf.itype == 1].render('rho', xlim=(x_sink_0 - 700, x_sink_0 + 700), ylim=(y_sink_0 - 700, y_sink_0 + 700), log_scale=True)
 
-if SECTIONAL_VIEW:
-    ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00)
-else:
-    ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True)
-
 # Sink particles visualisation
+
 def plot_sinks(ax):
     ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
     ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
 
 # sectional view at z = 0 , for sdf.itype, 1 = gas, 7 = dust (stokes = 10), 8 = dust (stokes = 1)
-ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'bone')
-ax_1.set_title("Gas Distribution in Disc")
-plot_sinks(ax_1)
-plt.show()
 
-ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'gray', alpha = 0.6)
-sdf[sdf.itype == 8].render('rho', xlim=(- 400,  400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'gist_heat', ax = ax_2, alpha = 0.8)
-ax_2.set_title("Dust Distribution in Disc")
-plot_sinks(ax_2)
-plt.show()
+if SECTIONAL_VIEW:
+    ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
+                                      cmap='bone')
+    ax_1.set_title("Gas Distribution in Disc")
+    plot_sinks(ax_1)
+    plt.show()
+
+    ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
+                                      cmap='gray', alpha=0.6)
+    sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap='gist_heat',
+                               ax=ax_2, alpha=0.8)
+    ax_2.set_title("Dust Distribution in Disc")
+    plot_sinks(ax_2)
+    plt.show()
+else:
+    ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+                                      cmap='bone')
+    ax_1.set_title("Gas Distribution in Disc")
+    plot_sinks(ax_1)
+    plt.show()
+
+    ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+                                      cmap='gray', alpha=0.6)
+    sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, cmap='gist_heat',
+                               ax=ax_2, alpha=0.8)
+    ax_2.set_title("Dust Distribution in Disc")
+    plot_sinks(ax_2)
+    plt.show()
+
+
+
+
 
 
 # TODO See if it is possible to have the heatmap be blue --> didn't find exact colour but picked another one
