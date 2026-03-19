@@ -4,23 +4,24 @@ import matplotlib.pyplot as plt
 
 
 sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
-
-
 sdf.calc_density()
 # sdf.describe()
-print(sdf)
-print(sdf_sinks)
+#print(sdf)
+#print(sdf_sinks)
 # print(sdf['itype'].value_counts())
 
 
 sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
 sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
+sdf['z'] = sdf['z'] - sdf_sinks.at[0, 'z']
 
 sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x'] 
 sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y'] 
+sdf_sinks.at[1, 'z'] = sdf_sinks.at[1, 'z'] - sdf_sinks.at[0, 'z']
 
 sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
 sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y'] 
+sdf_sinks.at[0, 'z'] = sdf_sinks.at[0, 'z'] - sdf_sinks.at[0, 'z']
 
 #Creating dots for sink particles
 x_sink_0 = sdf_sinks.at[0, 'x'] 
@@ -31,6 +32,12 @@ y_sink_1 = sdf_sinks.at[1, 'y']
 
 print(sdf)
 print(sdf_sinks)
+
+#Separate into different itypes
+
+sdf_gas = sdf[sdf.itype == 1].copy()
+sdf_dust_1 = sdf[sdf.itype == 7].copy()
+sdf_dust_2 = sdf[sdf.itype == 8].copy()
 
 plt.style.use('dark_background')
 
