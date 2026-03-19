@@ -1,5 +1,5 @@
+import pandas as pd
 import sarracen
-import pandas
 import matplotlib.pyplot as plt
 
 
@@ -23,8 +23,6 @@ sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
 sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y'] 
 
 #Creating dots for sink particles
-
-
 x_sink_0 = sdf_sinks.at[0, 'x'] 
 y_sink_0 = sdf_sinks.at[0, 'y'] 
 
