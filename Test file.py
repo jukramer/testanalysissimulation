@@ -102,8 +102,8 @@ else:
 
 
 
-# TODO See if it is possible to have the heatmap be blue --> didn't find exact colour but picked another one
 # TODO Centering accretion disc and moving all dust with it
 # TODO Work on radial binning analysis
 
+#TODO make background black in the visualisation
 
