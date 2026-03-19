@@ -49,13 +49,18 @@ def calcSigma(sdf, n, rIn, rOut):
     except IndexError:
         pass
     
-    return rVals, sigmaVals
+    return rVals[:-1], sigmaVals
         
     
 if __name__ == '__main__':
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('incl_30/incl_30_00004')
-    print(sdfGas)
     
+    rVals, sigmaVals = calcSigma(sdfGas, 100, 10, 150)
+    plt.plot(rVals, sigmaVals)
+    plt.title('Radial Binning Analysis')
+    plt.xlabel ('Radius [AU]')
+    plt.ylabel ('Surface density [kg/m^2]')
+    plt.show()
     
     
     
