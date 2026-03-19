@@ -28,6 +28,13 @@ def loadData():
     x_sink_1 = sdf_sinks.at[1, 'x']
     y_sink_1 = sdf_sinks.at[1, 'y']
 
+
+    #Separate into different itypes
+
+    sdf_gas = sdf[sdf.itype == 1].copy()
+    sdf_dust_1 = sdf[sdf.itype == 7].copy()
+    sdf_dust_2 = sdf[sdf.itype == 8].copy()
+    
     plt.style.use('dark_background')
 
     # Below one is not a sectional view
