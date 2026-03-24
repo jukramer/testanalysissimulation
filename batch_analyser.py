@@ -3,7 +3,7 @@ from render import render
 
 OUTPUT_PATH = "renders"
 # FOLDERS = ['incl_30', 'prograde', 'retrograde']
-FOLDERS = ['incl_30']
+FOLDERS = ['prograde']
 
 # Chek if output folders exist, make dir if non existent
 if not os.path.isdir(OUTPUT_PATH):
