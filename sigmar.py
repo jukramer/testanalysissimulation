@@ -11,6 +11,9 @@ MASS_DUST_2 = 2e-9
 def loadData(filepath):
     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
     
+    global sdfSinks0
+    sdfSinks0 = sdf_sinks.copy()
+    
     sdfGas = processData(sdfGas, sdf_sinks)
     sdfDust1 = processData(sdfDust1, sdf_sinks)
     sdfDust2 = processData(sdfDust2, sdf_sinks)
@@ -26,20 +29,23 @@ def processData(sdf, sdf_sinks):
     sdf.calc_density()
     
     # Centering
-    sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
-    sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
+    sdf['x'] = sdf['x'] - sdfSinks0.at[0, 'x']
+    sdf['y'] = sdf['y'] - sdfSinks0.at[0, 'y']
 
-    sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x'] 
-    sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y'] 
+    sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x']
+    sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y']
 
     sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
-    sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y'] 
+    sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
     
-    # Add r distance column
+    # Add polar coord columns
     dfxVals = sdf['x'].to_numpy()
     dfyVals = sdf['y'].to_numpy()
     rVals = np.sqrt(dfxVals**2 + dfyVals**2)
     sdf['r'] = rVals
+    
+    thetaVals = np.arctan2(dfxVals, dfyVals)
+    sdf['theta'] = thetaVals
     
     return sdf
 
@@ -65,13 +71,12 @@ if __name__ == '__main__':
     # sdfGas, sdfDust1, sdfDust2, sdfSinks = sarracen.read_phantom('prograde/prograde_00010')
     # print(set(sdf['mass'].to_list()))
     
-    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00010')
-    # print(sdfGas)
-    # print(sdfDust1)
-    
-    rVals, sigmaVals = calcSigma(sdfDust1, 50, 10, 150)
+    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
+
+    # Plotting 
+    rVals, sigmaVals = calcSigma(sdfDust1, 40, 10, 150)
     plt.plot(rVals, sigmaVals)
-    plt.title('Radial Binning Analysis')
     plt.xlabel ('Radius [AU]')
     plt.ylabel ('Surface density [kg/m^2]')
+    plt.yscale('log')
     plt.show()
