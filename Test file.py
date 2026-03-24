@@ -1,11 +1,17 @@
 import pandas as pd
 import sarracen
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import numpy as np
+from matplotlib.colors import LogNorm
 
-SECTIONAL_VIEW = False
+
+
+SECTIONAL_VIEW = True
 
 sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
 sdf.calc_density()
+
 # sdf.describe()
 #print(sdf)
 #print(sdf_sinks)
@@ -52,36 +58,56 @@ def plot_sinks(ax):
     ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
     ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
 
+#
+v_min = 10**(-10)
+# function to truncated colour maps
+def truncate_cmap(cmap_name, minval=0.2, maxval=1.0, n=256):
+    cmap = plt.get_cmap(cmap_name)
+    new_cmap = mcolors.LinearSegmentedColormap.from_list(
+        f"trunc_{cmap_name}",
+        cmap(np.linspace(minval, maxval, n)))
+    new_cmap.set_under(color='black')
+    return new_cmap
+
+cmap_dust = plt.get_cmap('Blues').copy()
+cmap_dust.set_under('black')
 # sectional view at z = 0 , for sdf.itype, 1 = gas, 7 = dust (stokes = 10), 8 = dust (stokes = 1)
 
 if SECTIONAL_VIEW:
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                      cmap='bone')
+                                      cmap='Blues_r')
     ax_1.set_title("Gas Distribution in Disc")
     plot_sinks(ax_1)
     plt.show()
 
     ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                      cmap='gray', alpha=0.6)
-    sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap='gist_heat',
-                               ax=ax_2, alpha=0.8)
-    ax_2.set_title("Dust Distribution in Disc")
+                                      cmap= truncate_cmap('gist_heat',0.1,1))
     plot_sinks(ax_2)
+    ax_2.set_title("Dust Distribution in Disc (Stokes Number = 10)")
+    plt.show()
+
+    ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'gist_heat', vmin=v_min)
+    plot_sinks(ax_3)
+    ax_3.set_title("Dust Distribution in Disc (Stokes Number = 1)")
     plt.show()
     
 else:
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                      cmap='bone')
+                                      cmap='Blues_r')
     ax_1.set_title("Gas Distribution in Disc")
     plot_sinks(ax_1)
     plt.show()
 
     ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                      cmap='gray', alpha=0.6)
-    sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, cmap='gist_heat',
-                               ax=ax_2, alpha=0.8)
-    ax_2.set_title("Dust Distribution in Disc")
+                                      cmap=truncate_cmap('gist_heat', 0.1, 1))
     plot_sinks(ax_2)
+    ax_2.set_title("Dust Distribution in Disc (Stokes Number = 10)")
+    plt.show()
+
+    ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+                                      cmap='gist_heat', vmin=v_min)
+    plot_sinks(ax_3)
+    ax_3.set_title("Dust Distribution in Disc (Stokes Number = 1)")
     plt.show()
 
 
@@ -89,8 +115,8 @@ else:
 
 
 
-# TODO See if it is possible to have the heatmap be blue --> didn't find exact colour but picked another one
 # TODO Centering accretion disc and moving all dust with it
 # TODO Work on radial binning analysis
 
+#TODO make background black in the visualisation
 
