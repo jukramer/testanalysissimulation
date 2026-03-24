@@ -84,7 +84,7 @@ if SECTIONAL_VIEW:
     plot_sinks(ax_3)
     ax_3.set_title("Dust Distribution in Disc (Stokes Number = 1)")
     plt.show()
-else: #TODO update when finalised
+else:
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
                                       cmap='Blues_r')
     ax_1.set_title("Gas Distribution in Disc")
