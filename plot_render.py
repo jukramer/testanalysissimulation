@@ -6,7 +6,6 @@ import numpy as np
 from matplotlib.colors import LogNorm
 from Test_file import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, subplot_dust2, plot_sinks, SECTIONAL_VIEW
 
-SECTIONAL_VIEW = True
 
 n_rows = 5
 n_cols = 3
@@ -23,10 +22,10 @@ for i in range(n_rows):
         ax = axes[i,j]
         if i < 10:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i}')
-            mappable = subplot_gas(sdf, True)
+            mappable = subplot_gas(sdf, True, ax)
         else:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i}')
-            mappable = subplot_gas(sdf, True)
+            mappable = subplot_gas(sdf, True, ax)
 
         ax.set_xticks([])
         ax.set_yticks([])
@@ -36,6 +35,7 @@ cbar.set_label("log(rho)")
 plt.tight_layout()
 plt.show()
 
+# todo fix this shit
 
 
 
