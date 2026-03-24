@@ -43,6 +43,35 @@ x_list.sort()
 print(x_list)
 
 
+def charradius(radii , masses):
+
+    sorted_indices = np.argsort(radii)
+    sorted_radii = radii[sorted_indices]
+    sorted_masses = masses[sorted_indices]
+
+    total_mass = np.sum(masses)
+    cumulative_mass = np.cumsum(sorted_masses)
+    target_mass = 0.632 * total_mass
+
+    idx = np.searchsorted(cumulative_mass, target_mass)
+
+    
+    if idx == 0:
+        r_632 = sorted_radii[0]
+    elif idx >= len(sorted_radii):
+        r_632 = sorted_radii[-1]
+    else:
+
+        r1 = sorted_radii[idx-1]
+        r2 = sorted_radii[idx]
+        m1 = cumulative_mass[idx-1]
+        m2 = cumulative_mass[idx]
+        r_632 = r1 + (r2 - r1) * (target_mass - m1) / (m2 - m1)
+
+    return r_632
+
+
+
 # MASS_GAS = 4e-8
 # MASS_DUST_1 = 2e-9
 # MASS_DUST_2 = 2e-9

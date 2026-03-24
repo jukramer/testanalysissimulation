@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import sarracen
 import matplotlib.pyplot as plt
+from scipy.interpolate import NearestNDInterpolator
 
 MASS_GAS = 4e-8
 MASS_DUST_1 = 2e-9
@@ -68,12 +69,17 @@ def calcSigma(sdf, n, rIn, rOut):
 
 
 def azimuthBin(sdf, col, nBins):
-    azimuthBins = np.linspace(0, 2*np.pi, nBins, True)
+    azimuthBins = np.linspace(-np.pi, np.pi, nBins, True)
     partIDs = []
     
-    for i in range(nBins):
-        sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
-        partIDs.append(sdfFilt.index[sdfFilt[col] == max[sdfFilt[col]]])
+    try:
+        for i in range(nBins):
+            sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
+            partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
+            # print(sdfFilt[col])
+            
+    except IndexError:  
+        pass
         
     return partIDs
         
@@ -84,7 +90,16 @@ if __name__ == '__main__':
     
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
-    print(azimuthBin(sdfGas, 'r', 50))
+    # gas density interpolator:
+    # Extract particle positions and the quantity you want
+    gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
+    dustlocations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
+    interpdustdensity = interp(dustlocations)
+    
+    print(azimuthBin(sdfGas, interpdustdensity, 50))
+
+    print(azimuthBin(sdfGas, 'theta', 50))
 
     # Plotting 
     if False:
