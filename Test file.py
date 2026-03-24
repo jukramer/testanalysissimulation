@@ -69,32 +69,38 @@ cmap_dust.set_under('black')
 
 if SECTIONAL_VIEW:
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                      cmap='bone')
+                                      cmap='Blues_r')
     ax_1.set_title("Gas Distribution in Disc")
     plot_sinks(ax_1)
     plt.show()
 
     ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                      cmap= truncate_cmap('bone',0.1,1), alpha=1)
-    sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, cmap = cmap_dust, vmin=v_min,
-                               ax=ax_2, alpha=0.4)
-    ax_2.set_title("Dust Distribution in Disc")
+                                      cmap= truncate_cmap('gist_heat',0.1,1))
     plot_sinks(ax_2)
+    ax_2.set_title("Dust Distribution in Disc (Stokes Number = 10)")
     plt.show()
-else:
+
+    ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00, cmap = 'gist_heat', vmin=v_min)
+    plot_sinks(ax_3)
+    ax_3.set_title("Dust Distribution in Disc (Stokes Number = 1)")
+    plt.show()
+else: #TODO update when finalised
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                      cmap='bone')
+                                      cmap='Blues_r')
     ax_1.set_title("Gas Distribution in Disc")
     plot_sinks(ax_1)
     plt.show()
 
     ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                      cmap=truncate_cmap('bone', 0.1, 1), alpha=1)
-    sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                               cmap=truncate_cmap('Blues', 0.3, 1),
-                               ax=ax_2, alpha=0.4)
-    ax_2.set_title("Dust Distribution in Disc")
+                                      cmap=truncate_cmap('gist_heat', 0.1, 1))
     plot_sinks(ax_2)
+    ax_2.set_title("Dust Distribution in Disc (Stokes Number = 10)")
+    plt.show()
+
+    ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+                                      cmap='gist_heat', vmin=v_min)
+    plot_sinks(ax_3)
+    ax_3.set_title("Dust Distribution in Disc (Stokes Number = 1)")
     plt.show()
 
 
