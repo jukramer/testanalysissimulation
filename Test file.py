@@ -72,6 +72,8 @@ if SECTIONAL_VIEW:
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
                                       cmap='bone')
     ax_1.set_title("Gas Distribution in Disc")
+    cbar = plt.gcf().axes[-1]
+    cbar.set_ylabel(r"$\log(\rho)$")
     plot_sinks(ax_1)
     plt.show()
 
@@ -79,16 +81,22 @@ if SECTIONAL_VIEW:
                                       cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
     plot_sinks(ax_2)
     ax_2.set_title("Dust Distribution in Disc (Stokes Number = 10)")
+    cbar = plt.gcf().axes[-1]
+    cbar.set_ylabel(r"$\log(\rho)$")
     plt.show()
 
     ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
     plot_sinks(ax_3)
     ax_3.set_title("Dust Distribution in Disc (Stokes Number = 1)")
+    cbar = plt.gcf().axes[-1]
+    cbar.set_ylabel(r"$\log(\rho)$")
     plt.show()
 else:
     ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
                                       cmap='bone')
     ax_1.set_title("Gas Distribution in Disc")
+    cbar = plt.gcf().axes[-1]
+    cbar.set_ylabel(r"$\log(\rho)$")
     plot_sinks(ax_1)
     plt.show()
 
@@ -96,11 +104,15 @@ else:
                                       cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
     plot_sinks(ax_2)
     ax_2.set_title("Dust Distribution in Disc (Stokes Number = 10)")
+    cbar = plt.gcf().axes[-1]
+    cbar.set_ylabel(r"$\log(\rho)$")
     plt.show()
 
     ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
     plot_sinks(ax_3)
     ax_3.set_title("Dust Distribution in Disc (Stokes Number = 1)")
+    cbar = plt.gcf().axes[-1]
+    cbar.set_ylabel(r"$\log(\rho)$")
     plt.show()
 
 

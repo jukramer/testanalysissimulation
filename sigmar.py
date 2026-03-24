@@ -65,6 +65,17 @@ def calcSigma(sdf, n, rIn, rOut):
         pass
     
     return rVals[:-1], sigmaVals
+
+
+def azimuthBin(sdf, col, nBins):
+    azimuthBins = np.linspace(0, 2*np.pi, nBins, True)
+    partIDs = []
+    
+    for i in range(nBins):
+        sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
+        partIDs.append(sdfFilt.index[sdfFilt[col] == max[sdfFilt[col]]])
+        
+    return partIDs
         
     
 if __name__ == '__main__':
@@ -73,10 +84,13 @@ if __name__ == '__main__':
     
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
+    print(azimuthBin(sdfGas, 'r', 50))
+
     # Plotting 
-    rVals, sigmaVals = calcSigma(sdfDust1, 40, 10, 150)
-    plt.plot(rVals, sigmaVals)
-    plt.xlabel ('Radius [AU]')
-    plt.ylabel ('Surface density [kg/m^2]')
-    plt.yscale('log')
-    plt.show()
+    if False:
+        rVals, sigmaVals = calcSigma(sdfDust1, 40, 10, 150)
+        plt.plot(rVals, sigmaVals)
+        plt.xlabel ('Radius [AU]')
+        plt.ylabel ('Surface density [kg/m^2]')
+        plt.yscale('log')
+        plt.show()
