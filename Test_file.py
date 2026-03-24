@@ -9,32 +9,36 @@ from matplotlib.colors import LogNorm
 
 SECTIONAL_VIEW = True
 
-sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
-
-
-sdf.calc_density()
+def sdf_creator(filename):
+    sdf, sdf_sinks = sarracen.read_phantom(filename)
+    sdf.calc_density()
 
 # sdf.describe()
-print(sdf)
-print(sdf_sinks)
+# print(sdf)
+# print(sdf_sinks)
 # print(sdf['itype'].value_counts())
 
 
-sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
-sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
+    sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
+    sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
 
-sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x'] 
-sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y'] 
+    sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x'] 
+    sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y'] 
 
-sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
-sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y'] 
+    sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
+    sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y'] 
 
+    return sdf, sdf_sinks
+
+sdf, sdf_sinks = sdf_creator('prograde/prograde_00010')
 #Creating dots for sink particles
 x_sink_0 = sdf_sinks.at[0, 'x'] 
 y_sink_0 = sdf_sinks.at[0, 'y'] 
 
 x_sink_1 = sdf_sinks.at[1, 'x']
 y_sink_1 = sdf_sinks.at[1, 'y']
+
+    
 
 print(sdf)
 print(sdf_sinks)
@@ -127,9 +131,9 @@ def render_dust2(sdf, SECTIONAL_VIEW):
         plt.show()
 
 
-render_gas(sdf)
-render_dust1(sdf)
-render_dust2(sdf)
+render_gas(sdf, True)
+render_dust1(sdf,  True)
+render_dust2(sdf,  True)
 
     
 
