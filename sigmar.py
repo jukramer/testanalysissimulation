@@ -88,11 +88,12 @@ if __name__ == '__main__':
     # gas density interpolator:
     # Extract particle positions and the quantity you want
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
-    dustlocations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    dust1locations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
-    interpdustdensity = interp(dustlocations)
+    sdfDust1['interpdustdensity'] = interp(dust1locations)
     
-    print(azimuthBin(sdfGas, interpdustdensity, 50))
+    # still have to merge the two sets of dust values
+    print(azimuthBin(sdfGas, 'interpdustdensity', 50))
 
     print(azimuthBin(sdfGas, 'r', 50))
 
