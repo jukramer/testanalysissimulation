@@ -139,45 +139,47 @@ cmap_dust = truncate_cmap('Blues_r')
 
 #Functions to render plots individually with axis and with colour bars
 
-def subplot_gas(sdf, SECTIONAL_VIEW):
+def subplot_gas(sdf, SECTIONAL_VIEW, ax):
     if SECTIONAL_VIEW:
-        ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
+        ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
                                         cmap= 'bone')
-        plot_sinks(ax_1)
+        plot_sinks(ax)
 
     else:
-        ax_1 = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+        ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
                                       cmap= 'bone')
-        plot_sinks(ax_1)
+        plot_sinks(ax)
 
-    return ax_1
+    return ax
 
-def subplot_dust1(sdf, SECTIONAL_VIEW):
+def subplot_dust1(sdf, SECTIONAL_VIEW, ax):
     cmap1 = truncate_cmap('gist_heat', 0.1, 1)
     cmap1.set_under('black')
     if SECTIONAL_VIEW:
-        ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
                                       cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax_2)
+        plot_sinks(ax)
 
     else:
-        ax_2 = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False,
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False,
                                       cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax_2)
+        plot_sinks(ax)
     
-    return ax_2
+    return ax
 
 
-def subplot_dust2(sdf, SECTIONAL_VIEW):
+def subplot_dust2(sdf, SECTIONAL_VIEW, ax):
     cmap1 = truncate_cmap('gist_heat', 0.1, 1)
     cmap1.set_under('black')
     if SECTIONAL_VIEW:
-        ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax_3)
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
+        plot_sinks(ax)
             
     else:
-        ax_3 = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax_3)
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
+        plot_sinks(ax)
+    
+    return ax
 
 
 
