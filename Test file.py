@@ -119,8 +119,7 @@ else:
 
 
 
-# TODO Centering accretion disc and moving all dust with it
-# TODO Work on radial binning analysis
 
-#TODO make background black in the visualisation
+
+
 
