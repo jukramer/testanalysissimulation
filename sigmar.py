@@ -69,12 +69,12 @@ def calcSigma(sdf, n, rIn, rOut):
 
 
 def azimuthBin(sdf, col, nBins):
-    azimuthBins = np.linspace(-np.pi, np.pi, nBins, True)
+    azimuthBins = np.linspace(-np.pi, np.pi, nBins + 1, True)
     partIDs = []
     
     try:
-        for i in range(nBins):
-            sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
+        for i in range(nBins+1):
+            sdfFilt = sdf[sdf['theta'].between(azimuthBins[i], azimuthBins[i+1])]
             partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
             
     except IndexError:  
@@ -83,13 +83,14 @@ def azimuthBin(sdf, col, nBins):
     return partIDs
 
 
-def trackPart(orbitType, cols, nSnapshots=12, nAzimuthBins=50):
+def trackPart(orbitType, cols, dustType, nSnapshots=12, nAzimuthBins=50):
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_00000')
     
-    # Array dims: tracked values x snapshot x particle
-    gasArray = np.array((len(cols), nSnapshots, nAzimuthBins))
-    dust1Array = np.array((len(cols), nSnapshots, nAzimuthBins))
-    dust2Array = np.array((len(cols), nSnapshots, nAzimuthBins))
+    # Array dims: tracked values x particle x snapshot
+    gasArray = np.zeros((len(cols), nAzimuthBins, nSnapshots))
+    dust1Array = np.zeros((len(cols), nAzimuthBins, nSnapshots))
+    dust2Array = np.zeros((len(cols), nAzimuthBins, nSnapshots))
+    print(dust1Array.shape)
     
     # Interpolation
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
@@ -97,39 +98,45 @@ def trackPart(orbitType, cols, nSnapshots=12, nAzimuthBins=50):
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
     interpDustDensity = interp(dustlocations)
     
-    idxsGas = azimuthBin(sdfGas, 'rho', 50)
-    idxsDust1 = azimuthBin(sdfDust1, ':(', 50)
-    idxsDust2 = azimuthBin(sdfDust2, ':(', 50)
+    if dustType == 1:
+        idxs = azimuthBin(sdfDust1, 'theta', 50)
+    elif dustType == 2:
+        idxs = azimuthBin(sdfDust2, 'theta', 50)
+    else:
+        print('Incorrect dust type!')
+        return
     
     for i in range(1, 12):
         try:
-            sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_0000{i}')
-            for j in range(len(cols)):
+            sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_000{i:02d}')
+            if dustType == 1:
+                sdfDust = sdfDust1
+            elif dustType == 2:
+                sdfDust = sdfDust2
                 
-                   
-            
-            
+            if dustType == 1:
+                dust1Array[:,:,i] = sdfDust.loc[idxs, cols].to_numpy().T
+            elif dustType == 2:
+                dust2Array[:,:,i] = sdfDust.loc[idxs, cols].to_numpy().T
             
         except FileNotFoundError:
             pass
-            
     
-    
-    
-        
+    return dust1Array
     
 if __name__ == '__main__':
-    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
+    print(trackPart('prograde', ['r'], 1))
+    # sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
     # gas density interpolator:
-    # Extract particle positions and the quantity you want
-    gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
-    dust1locations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
-    interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
-    sdfDust1['interpdustdensity'] = interp(dust1locations)
+    # # Extract particle positions and the quantity you want
+    # gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
+    # dust1locations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    # interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
+    # sdfDust1['interpdustdensity'] = interp(dust1locations)
     
-    # still have to merge the two sets of dust values
-    print(azimuthBin(sdfGas, 'interpdustdensity', 50))
+    # # still have to merge the two sets of dust values
+    # print(azimuthBin(sdfGas, 'interpdustdensity', 50))
 
     # Plotting 
     if False:
