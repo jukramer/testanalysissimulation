@@ -141,16 +141,23 @@ cmap_dust = truncate_cmap('Blues_r')
 
 def subplot_gas(sdf, SECTIONAL_VIEW, ax):
     if SECTIONAL_VIEW:
-        ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                        cmap= 'bone')
-        plot_sinks(ax)
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
+                                        cmap= 'bone', ax=ax)
+
 
     else:
-        ax = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                      cmap= 'bone')
-        plot_sinks(ax)
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+                                      cmap= 'bone', ax = ax)
+    plot_sinks(ax)
 
-    return ax
+    if ax.images:
+        return ax.images[0]
+    elif ax.collections:
+        return ax.collections[0]
+    else:
+        return None
+
+
 
 def subplot_dust1(sdf, SECTIONAL_VIEW, ax):
     cmap1 = truncate_cmap('gist_heat', 0.1, 1)
