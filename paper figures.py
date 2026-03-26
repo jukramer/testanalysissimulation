@@ -5,17 +5,17 @@ import matplotlib.pyplot as plt
 import os
 from render import render
 
-# FOLDERS = ['prograde']
-
-x_list = []
+## Setup constants
+FOLDERS = ['prograde', 'incl_30', 'retrograde']
+PARTICLE_INDICES = [2] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
 
 
 def processData(sdf, sdf_sinks):
     sdf.calc_density()
 
     # Centering
-    sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
-    sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
+    sdf['x'] = sdf['x'] - sdfSinks0.at[0, 'x']
+    sdf['y'] = sdf['y'] - sdfSinks0.at[0, 'y']
 
     sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y']
@@ -28,20 +28,7 @@ def processData(sdf, sdf_sinks):
     dfyVals = sdf['y'].to_numpy()
     rVals = np.sqrt(dfxVals ** 2 + dfyVals ** 2)
     sdf['r'] = rVals
-
     return sdf
-
-
-# #Check amount of files (timestamps)
-# for folder in FOLDERS:
-#     for file in os.listdir(folder):
-#         if file.startswith(f"{folder}_"):
-#             print(f"Processing {file} from {folder}")
-#             x_list.append(round(int(file[-3:])*0.05, 3))
-
-# x_list.sort()
-# print(x_list)
-
 
 def characteristic_radius(radii , masses):
 
@@ -70,30 +57,60 @@ def characteristic_radius(radii , masses):
 
     return r_632
 
-sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
-processData(sdf, sdf_sinks)
-# print(sdf)
+MASS_GAS = 4e-8
+MASS_DUST_1 = 2e-9
+MASS_DUST_2 = 2e-9
 
-print(sdf.get("mass"))
-print(sdf.get("r"))
+def loadData(filepath):
+    sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
+
+    global sdfSinks0
+    sdfSinks0 = sdf_sinks.copy()
+
+    sdfGas = processData(sdfGas, sdf_sinks)
+    sdfDust1 = processData(sdfDust1, sdf_sinks)
+    sdfDust2 = processData(sdfDust2, sdf_sinks)
+
+    sdfGas['mass'] = MASS_GAS
+    sdfDust1['mass'] = MASS_DUST_1
+    sdfDust2['mass'] = MASS_DUST_2
+    return sdfGas, sdfDust1, sdfDust2, sdf_sinks
+
+results = {}
+
+# #Check amount of files (timestamps)
+for folder in FOLDERS:
+    results[folder] = {}
+
+    for file in os.listdir(folder):
+        x, r = 0, 0
+        if file.startswith(f"{folder}_"):
+            print(f"Processing {file} from {folder}")
+            x = round(int(file[-3:])*0.05, 3)
+
+            # sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
+            sdfGas, sdfDust1, sdfDust2, sdf_sinks = loadData(f'{folder}/{file}')
+            particleTypes = [sdfGas, sdfDust1, sdfDust2, sdf_sinks]
+
+            # Get the chosen particles and concatenate to list
+            chosenParticles = []
+            for particleIndex in PARTICLE_INDICES:
+                chosenParticles.append(particleTypes[particleIndex])
+            sdf = pd.concat(chosenParticles)
+
+            # Calculate characteristic radius and add to list
+            r = characteristic_radius(sdf.get('r').to_numpy(), sdf.get('mass').to_numpy())
+            results[folder][x] = r
+
+
+    print(results[folder])
+    results[folder] = dict(sorted(results[folder].items()))
+    print(results[folder])
+    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
 
 
 
-# MASS_GAS = 4e-8
-# MASS_DUST_1 = 2e-9
-# MASS_DUST_2 = 2e-9
-
-# def loadData(filepath):
-#     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
-    
-#     sdfGas = processData(sdfGas, sdf_sinks)
-#     sdfDust1 = processData(sdfDust1, sdf_sinks)
-#     sdfDust2 = processData(sdfDust2, sdf_sinks)
-    
-#     sdfGas['mass'] = MASS_GAS
-#     sdfDust1['mass'] = MASS_DUST_1
-#     sdfDust2['mass'] = MASS_DUST_2
-    
-#     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
-
-
+plt.xlabel("time [scaled units]")
+plt.ylabel("r63,dust [au]")
+plt.legend()
+plt.show()

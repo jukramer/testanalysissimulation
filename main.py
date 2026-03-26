@@ -4,5 +4,5 @@ import sarracen as sar
 
 
 if __name__ == '__main__':
-    pass
+    print('on my momma house')
     
