@@ -83,20 +83,41 @@ def azimuthBin(sdf, col, nBins):
     return partIDs
 
 
-def trackPart(filepath):
-    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(filepath)
+def trackPart(orbitType, cols, nSnapshots=12, nAzimuthBins=50):
+    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_00000')
     
-    # Gas Density Interpolation
+    # Array dims: tracked values x snapshot x particle
+    gasArray = np.array((len(cols), nSnapshots, nAzimuthBins))
+    dust1Array = np.array((len(cols), nSnapshots, nAzimuthBins))
+    dust2Array = np.array((len(cols), nSnapshots, nAzimuthBins))
+    
+    # Interpolation
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
-    dustlocations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    dustlocations = np.column_stack([sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
     interpDustDensity = interp(dustlocations)
     
+    idxsGas = azimuthBin(sdfGas, 'rho', 50)
+    idxsDust1 = azimuthBin(sdfDust1, ':(', 50)
+    idxsDust2 = azimuthBin(sdfDust2, ':(', 50)
+    
+    for i in range(1, 12):
+        try:
+            sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_0000{i}')
+            for j in range(len(cols)):
+                
+                   
+            
+            
+            
+        except FileNotFoundError:
+            pass
+            
     
     
     
+        
     
-
 if __name__ == '__main__':
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
