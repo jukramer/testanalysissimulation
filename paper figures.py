@@ -73,11 +73,19 @@ for folder in FOLDERS:
         if file.startswith(f"{folder}_"):
             print(f"Processing {file} from {folder}")
             x = round(int(file[-3:])*0.05, 3)
-        sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
-        sdf = processData(sdf, sdf_sinks)
-        r = characteristic_radius(sdf.get("r").to_numpy(), sdf.get("mass").to_numpy())
+            sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
+            sdf = processData(sdf, sdf_sinks)
+            r = characteristic_radius(sdf.get("r").to_numpy(), sdf.get("mass").to_numpy())
 
-        results[folder][x] = r
+            results[folder][x] = r
+    print(results[folder])
+    results[folder] = dict(sorted(results[folder].items()))
+    print(results[folder])
+    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
+
+plt.legend()
+plt.show()
+
 
 
 
