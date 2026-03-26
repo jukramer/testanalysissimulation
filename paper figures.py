@@ -83,6 +83,32 @@ for folder in FOLDERS:
     print(results[folder])
     plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
 
+
+
+
+MASS_GAS = 4e-8
+MASS_DUST_1 = 2e-9
+MASS_DUST_2 = 2e-9
+
+
+def loadData(filepath):
+    sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
+    
+    global sdfSinks0
+    sdfSinks0 = sdf_sinks.copy()
+    
+    sdfGas = processData(sdfGas, sdf_sinks)
+    sdfDust1 = processData(sdfDust1, sdf_sinks)
+    sdfDust2 = processData(sdfDust2, sdf_sinks)
+    
+    sdfGas['mass'] = MASS_GAS
+    sdfDust1['mass'] = MASS_DUST_1
+    sdfDust2['mass'] = MASS_DUST_2
+    
+    return sdfGas, sdfDust1, sdfDust2, sdf_sinks
+
+
+
 plt.legend()
 plt.show()
 
