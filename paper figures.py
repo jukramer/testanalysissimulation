@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os
 from render import render
 
-FOLDERS = ['prograde']
+# FOLDERS = ['prograde']
 
 x_list = []
 
@@ -32,18 +32,18 @@ def processData(sdf, sdf_sinks):
     return sdf
 
 
-#Check amount of files (timestamps)
-for folder in FOLDERS:
-    for file in os.listdir(folder):
-        if file.startswith(f"{folder}_"):
-            print(f"Processing {file} from {folder}")
-            x_list.append(round(int(file[-3:])*0.05, 3))
+# #Check amount of files (timestamps)
+# for folder in FOLDERS:
+#     for file in os.listdir(folder):
+#         if file.startswith(f"{folder}_"):
+#             print(f"Processing {file} from {folder}")
+#             x_list.append(round(int(file[-3:])*0.05, 3))
 
-x_list.sort()
-print(x_list)
+# x_list.sort()
+# print(x_list)
 
 
-def charradius(radii , masses):
+def characteristic_radius(radii , masses):
 
     sorted_indices = np.argsort(radii)
     sorted_radii = radii[sorted_indices]
@@ -69,6 +69,13 @@ def charradius(radii , masses):
         r_632 = r1 + (r2 - r1) * (target_mass - m1) / (m2 - m1)
 
     return r_632
+
+sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
+processData(sdf, sdf_sinks)
+# print(sdf)
+
+print(sdf.get("mass"))
+print(sdf.get("r"))
 
 
 
