@@ -119,12 +119,16 @@ def trackPart(orbitType, cols, dustType, nSnapshots=12, nAzimuthBins=50):
                 dust2Array[:,:,i] = sdfDust.loc[idxs, cols].to_numpy().T
             
         except FileNotFoundError:
-            pass
-    
+            if dustType == 1:
+                dust1Array = np.delete(dust1Array, i, 2)
+            elif dustType == 2:
+                dust2Array = np.delete(dust2Array, i, 2)
+            
     return dust1Array
     
 if __name__ == '__main__':
-    print(trackPart('prograde', ['r', 'x'], 1).shape)
+    print(trackPart('retrograde', ['r', 'x'], 1).shape)
+    
     # sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
     # gas density interpolator:
