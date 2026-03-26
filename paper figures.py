@@ -7,7 +7,7 @@ from render import render
 
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
-PARTICLE_INDICES = [1, 2] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
+PARTICLE_INDICES = [2] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
 
 
 def processData(sdf, sdf_sinks):
@@ -108,5 +108,9 @@ for folder in FOLDERS:
     print(results[folder])
     plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
 
+
+
+plt.xlabel("time [scaled units]")
+plt.ylabel("r63,dust [au]")
 plt.legend()
 plt.show()
