@@ -76,18 +76,28 @@ def azimuthBin(sdf, col, nBins):
         for i in range(nBins):
             sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
             partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
-            # print(sdfFilt[col])
             
     except IndexError:  
         pass
         
     return partIDs
-        
+
+
+def trackPart(filepath):
+    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(filepath)
     
+    # Gas Density Interpolation
+    gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
+    dustlocations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
+    interpDustDensity = interp(dustlocations)
+    
+    
+    
+    
+    
+
 if __name__ == '__main__':
-    # sdfGas, sdfDust1, sdfDust2, sdfSinks = sarracen.read_phantom('prograde/prograde_00010')
-    # print(set(sdf['mass'].to_list()))
-    
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
     # gas density interpolator:
@@ -98,8 +108,6 @@ if __name__ == '__main__':
     interpdustdensity = interp(dustlocations)
     
     print(azimuthBin(sdfGas, interpdustdensity, 50))
-
-    print(azimuthBin(sdfGas, 'theta', 50))
 
     # Plotting 
     if False:
