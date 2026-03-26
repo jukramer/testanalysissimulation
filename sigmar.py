@@ -82,6 +82,17 @@ def azimuthBin(sdf, col, nBins):
         pass
         
     return partIDs
+
+
+def trackPart(filepath):
+    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(filepath)
+    
+    # Gas Density Interpolation
+    gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
+    dustlocations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
+    interpDustDensity = interp(dustlocations)
+    
         
     
 if __name__ == '__main__':
