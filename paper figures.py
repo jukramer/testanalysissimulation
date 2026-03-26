@@ -62,18 +62,30 @@ sdf = processData(sdf, sdf_sinks)
 
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
 
+results = {}
+
 # #Check amount of files (timestamps)
 for folder in FOLDERS:
-    r_list = []
-    x_list = []
+    results[folder] = {}
 
     for file in os.listdir(folder):
+        x, r = 0, 0
         if file.startswith(f"{folder}_"):
             print(f"Processing {file} from {folder}")
-            x_list.append(round(int(file[-3:])*0.05, 3))
-        x_list.sort()
-        sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
-        sdf = processData(sdf, sdf_sinks)
-        radius = characteristic_radius(sdf.get("r").to_numpy(), sdf.get("mass").to_numpy())
-        r_list.append(radius)
-        print(radius)
+            x = round(int(file[-3:])*0.05, 3)
+            sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
+            sdf = processData(sdf, sdf_sinks)
+            r = characteristic_radius(sdf.get("r").to_numpy(), sdf.get("mass").to_numpy())
+
+            results[folder][x] = r
+    print(results[folder])
+    results[folder] = dict(sorted(results[folder].items()))
+    print(results[folder])
+    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
+
+plt.legend()
+plt.show()
+
+
+
+
