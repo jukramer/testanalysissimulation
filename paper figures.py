@@ -7,15 +7,15 @@ from render import render
 
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
-PARTICLE_INDICES = [ 2] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
+PARTICLE_INDICES = [1, 2] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
 
 
 def processData(sdf, sdf_sinks):
     sdf.calc_density()
 
     # Centering
-    sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
-    sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
+    sdf['x'] = sdf['x'] - sdfSinks0.at[0, 'x']
+    sdf['y'] = sdf['y'] - sdfSinks0.at[0, 'y']
 
     sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y']
@@ -57,11 +57,11 @@ def characteristic_radius(radii , masses):
 
     return r_632
 
-def loadData(filepath):
-    MASS_GAS = 4e-8
-    MASS_DUST_1 = 2e-9
-    MASS_DUST_2 = 2e-9
+MASS_GAS = 4e-8
+MASS_DUST_1 = 2e-9
+MASS_DUST_2 = 2e-9
 
+def loadData(filepath):
     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
 
     global sdfSinks0
@@ -74,13 +74,7 @@ def loadData(filepath):
     sdfGas['mass'] = MASS_GAS
     sdfDust1['mass'] = MASS_DUST_1
     sdfDust2['mass'] = MASS_DUST_2
-
     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
-
-
-
-
-
 
 results = {}
 
@@ -114,18 +108,5 @@ for folder in FOLDERS:
     print(results[folder])
     plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
 
-
-
-
-
-
-
-
-
-
 plt.legend()
 plt.show()
-
-
-
-
