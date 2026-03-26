@@ -9,7 +9,7 @@ from Test_file import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, subplo
 
 n_rows = 5
 n_cols = 3
-fig, axes  = plt.subplots(nrows= n_rows, ncols= n_cols)
+fig, axes  = plt.subplots(nrows= n_rows, ncols= n_cols, figsize= (6,8))
 plt.style.use('dark_background')
 mappable_for_cbar = None
 
@@ -25,7 +25,7 @@ for i in range(n_rows):
         else:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i}')
 
-        render = subplot_gas(sdf, True, ax)
+        render = subplot_gas(sdf, True, ax, False)
 
         ax.set_xticks([])
         ax.set_yticks([])
