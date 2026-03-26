@@ -90,7 +90,6 @@ def trackPart(orbitType, cols, dustType, nSnapshots=12, nAzimuthBins=50):
     gasArray = np.zeros((len(cols), nAzimuthBins, nSnapshots))
     dust1Array = np.zeros((len(cols), nAzimuthBins, nSnapshots))
     dust2Array = np.zeros((len(cols), nAzimuthBins, nSnapshots))
-    print(dust1Array.shape)
     
     # Interpolation
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
@@ -125,7 +124,7 @@ def trackPart(orbitType, cols, dustType, nSnapshots=12, nAzimuthBins=50):
     return dust1Array
     
 if __name__ == '__main__':
-    print(trackPart('prograde', ['r'], 1))
+    print(trackPart('prograde', ['r', 'x'], 1).shape)
     # sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
     # gas density interpolator:
