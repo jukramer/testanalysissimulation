@@ -37,7 +37,7 @@ for i in range(n_rows):
             ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad = 10)
         
         if j == 0:
-            ax.set_ylabel(Time[j], fontsze = 10)
+            ax.set_ylabel(Time[i], fontsize=10)
 
         if mappable_for_cbar is None:
             mappable_for_cbar = render
