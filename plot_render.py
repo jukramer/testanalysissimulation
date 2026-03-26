@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
 from matplotlib.colors import LogNorm
-from Test_file import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, subplot_dust2, plot_sinks, SECTIONAL_VIEW
+from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, subplot_dust2, plot_sinks, SECTIONAL_VIEW
 
 
 n_rows = 5

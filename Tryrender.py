@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 from Test_file import cmap_dust, sdf_creator, subplot_gas, SECTIONAL_VIEW
-
+# TODO implement render_functions instead of test_files
+# TODO Clean up python files, delete irrelevant
+# TODO Pick relevant times
 n_rows = 5
 n_cols = 3
 
