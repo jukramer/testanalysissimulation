@@ -11,7 +11,7 @@ n_rows = 5
 n_cols = 3
 fig, axes  = plt.subplots(nrows= n_rows, ncols= n_cols)
 plt.style.use('dark_background')
-mappable = None
+mappable_for_cbar = None
 
 # for gas distribution
 cmap = cmap_dust
@@ -22,16 +22,18 @@ for i in range(n_rows):
         ax = axes[i,j]
         if i < 10:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i}')
-            mappable = subplot_gas(sdf, True, ax)
         else:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i}')
-            mappable = subplot_gas(sdf, True, ax)
+
+        render = subplot_gas(sdf, True, ax)
 
         ax.set_xticks([])
         ax.set_yticks([])
 
-cbar = fig.colorbar(mappable=mappable, ax=axes, location='right', fraction = 0.02, pad = 0.02)
-cbar.set_label("log(rho)")
+        if mappable_for_cbar is None:
+            mappable_for_cbar = render
+#cbar = fig.colorbar(mappable=mappable, ax=axes, location='right', fraction = 0.02, pad = 0.02)
+#cbar.set_label("log(rho)")
 plt.tight_layout()
 plt.show()
 
