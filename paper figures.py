@@ -28,7 +28,6 @@ def processData(sdf, sdf_sinks):
     dfyVals = sdf['y'].to_numpy()
     rVals = np.sqrt(dfxVals ** 2 + dfyVals ** 2)
     sdf['r'] = rVals
-
     return sdf
 
 
@@ -71,9 +70,8 @@ def characteristic_radius(radii , masses):
     return r_632
 
 sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
-processData(sdf, sdf_sinks)
+sdf = processData(sdf, sdf_sinks)
 # print(sdf)
-
 print(sdf.get("mass"))
 print(sdf.get("r"))
 
