@@ -5,9 +5,6 @@ import matplotlib.pyplot as plt
 import os
 from render import render
 
-# FOLDERS = ['prograde']
-
-x_list = []
 
 
 def processData(sdf, sdf_sinks):
@@ -29,18 +26,6 @@ def processData(sdf, sdf_sinks):
     rVals = np.sqrt(dfxVals ** 2 + dfyVals ** 2)
     sdf['r'] = rVals
     return sdf
-
-
-# #Check amount of files (timestamps)
-# for folder in FOLDERS:
-#     for file in os.listdir(folder):
-#         if file.startswith(f"{folder}_"):
-#             print(f"Processing {file} from {folder}")
-#             x_list.append(round(int(file[-3:])*0.05, 3))
-
-# x_list.sort()
-# print(x_list)
-
 
 def characteristic_radius(radii , masses):
 
@@ -73,26 +58,22 @@ sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00000')
 sdf = processData(sdf, sdf_sinks)
 # print(sdf)
 
-radius = characteristic_radius(sdf.get("r").to_numpy(), sdf.get("mass").to_numpy())
-print(radius)
 
 
+FOLDERS = ['prograde', 'incl_30', 'retrograde']
 
-# MASS_GAS = 4e-8
-# MASS_DUST_1 = 2e-9
-# MASS_DUST_2 = 2e-9
+# #Check amount of files (timestamps)
+for folder in FOLDERS:
+    r_list = []
+    x_list = []
 
-# def loadData(filepath):
-#     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
-    
-#     sdfGas = processData(sdfGas, sdf_sinks)
-#     sdfDust1 = processData(sdfDust1, sdf_sinks)
-#     sdfDust2 = processData(sdfDust2, sdf_sinks)
-    
-#     sdfGas['mass'] = MASS_GAS
-#     sdfDust1['mass'] = MASS_DUST_1
-#     sdfDust2['mass'] = MASS_DUST_2
-    
-#     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
-
-
+    for file in os.listdir(folder):
+        if file.startswith(f"{folder}_"):
+            print(f"Processing {file} from {folder}")
+            x_list.append(round(int(file[-3:])*0.05, 3))
+        x_list.sort()
+        sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
+        sdf = processData(sdf, sdf_sinks)
+        radius = characteristic_radius(sdf.get("r").to_numpy(), sdf.get("mass").to_numpy())
+        r_list.append(radius)
+        print(radius)
