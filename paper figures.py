@@ -69,11 +69,12 @@ def characteristic_radius(radii , masses):
 
     return r_632
 
-sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00010')
+sdf, sdf_sinks = sarracen.read_phantom('prograde/prograde_00000')
 sdf = processData(sdf, sdf_sinks)
 # print(sdf)
-print(sdf.get("mass"))
-print(sdf.get("r"))
+
+radius = characteristic_radius(sdf.get("r").to_numpy(), sdf.get("mass").to_numpy())
+print(radius)
 
 
 
