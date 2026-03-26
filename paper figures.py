@@ -43,7 +43,7 @@ def processData(sdf, sdf_sinks):
 # print(x_list)
 
 
-def charradius(radii , masses):
+def characteristic_radius(radii , masses):
 
     sorted_indices = np.argsort(radii)
     sorted_radii = radii[sorted_indices]
