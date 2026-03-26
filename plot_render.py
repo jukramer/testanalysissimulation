@@ -29,6 +29,8 @@ for i in range(n_rows):
 
         ax.set_xticks([])
         ax.set_yticks([])
+        ax.set_xlabel('')
+        ax.set_ylabel('')
 
         if mappable_for_cbar is None:
             mappable_for_cbar = render

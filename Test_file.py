@@ -67,6 +67,57 @@ def truncate_cmap(cmap_name, minval=0.0, maxval=1.0, n=512):
     return new_cmap
 cmap_dust = truncate_cmap('Blues_r')
 
+#Functions to render plots individually with axis and with colour bars
+
+def subplot_gas(sdf, SECTIONAL_VIEW, ax, cbar):
+    if SECTIONAL_VIEW:
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
+                                        cmap= 'bone', ax=ax, cbar= cbar)
+
+
+    else:
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+                                      cmap= 'bone', ax = ax, cbar= cbar)
+    plot_sinks(ax)
+
+    if ax.images:
+        return ax.images[0]
+    elif ax.collections:
+        return ax.collections[0]
+    else:
+        return None
+
+
+
+def subplot_dust1(sdf, SECTIONAL_VIEW, ax):
+    cmap1 = truncate_cmap('gist_heat', 0.1, 1)
+    cmap1.set_under('black')
+    if SECTIONAL_VIEW:
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
+                                      cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
+        plot_sinks(ax)
+
+    else:
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False,
+                                      cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
+        plot_sinks(ax)
+    
+    return ax
+
+
+def subplot_dust2(sdf, SECTIONAL_VIEW, ax):
+    cmap1 = truncate_cmap('gist_heat', 0.1, 1)
+    cmap1.set_under('black')
+    if SECTIONAL_VIEW:
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
+        plot_sinks(ax)
+            
+    else:
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
+        plot_sinks(ax)
+    
+    return ax
+
 # sectional view at z = 0 , for sdf.itype, 1 = gas, 7 = dust (stokes = 10), 8 = dust (stokes = 1)
 
 #Functions to render plots individually with axis and with colour bars
@@ -137,56 +188,7 @@ cmap_dust = truncate_cmap('Blues_r')
 
     
 
-#Functions to render plots individually with axis and with colour bars
 
-def subplot_gas(sdf, SECTIONAL_VIEW, ax, cbar):
-    if SECTIONAL_VIEW:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                        cmap= 'bone', ax=ax, cbar= cbar)
-
-
-    else:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                      cmap= 'bone', ax = ax, cbar= cbar)
-    plot_sinks(ax)
-
-    if ax.images:
-        return ax.images[0]
-    elif ax.collections:
-        return ax.collections[0]
-    else:
-        return None
-
-
-
-def subplot_dust1(sdf, SECTIONAL_VIEW, ax):
-    cmap1 = truncate_cmap('gist_heat', 0.1, 1)
-    cmap1.set_under('black')
-    if SECTIONAL_VIEW:
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
-                                      cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
-
-    else:
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False,
-                                      cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
-    
-    return ax
-
-
-def subplot_dust2(sdf, SECTIONAL_VIEW, ax):
-    cmap1 = truncate_cmap('gist_heat', 0.1, 1)
-    cmap1.set_under('black')
-    if SECTIONAL_VIEW:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
-            
-    else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
-    
-    return ax
 
 
 
