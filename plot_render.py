@@ -17,20 +17,27 @@ mappable_for_cbar = None
 cmap = cmap_dust
 norm = LogNorm()
 encounter = ['prograde','retrograde','incl_30']
+Time = [ '0 yr', '500 yr', '1000 yr', '1500 yr', '2000 yr']
 for i in range(n_rows):
     for j in range(n_cols):
         ax = axes[i,j]
-        if i < 10:
+        if (i)< 10:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i}')
         else:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i}')
 
-        render = subplot_gas(sdf, True, ax, False)
+        render = subplot_gas(sdf, sdf_sinks, True, ax, False)
 
         ax.set_xticks([])
         ax.set_yticks([])
         ax.set_xlabel('')
         ax.set_ylabel('')
+
+        if i == 0:
+            ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad = 10)
+        
+        if j == 0:
+            ax.set_ylabel(Time[j], fontsze = 10)
 
         if mappable_for_cbar is None:
             mappable_for_cbar = render

@@ -30,13 +30,13 @@ def sdf_creator(filename):
 
     return sdf, sdf_sinks
 
-sdf, sdf_sinks = sdf_creator('prograde/prograde_00010')
+# sdf, sdf_sinks = sdf_creator('prograde/prograde_00010')
 #Creating dots for sink particles
-x_sink_0 = sdf_sinks.at[0, 'x'] 
-y_sink_0 = sdf_sinks.at[0, 'y'] 
+# x_sink_0 = sdf_sinks.at[0, 'x'] 
+# y_sink_0 = sdf_sinks.at[0, 'y'] 
 
-x_sink_1 = sdf_sinks.at[1, 'x']
-y_sink_1 = sdf_sinks.at[1, 'y']
+# x_sink_1 = sdf_sinks.at[1, 'x']
+# y_sink_1 = sdf_sinks.at[1, 'y']
 
     
 
@@ -52,7 +52,12 @@ plt.style.use('dark_background')
 
 # Sink particles visualisation
 
-def plot_sinks(ax):
+def plot_sinks(ax, sdf_sinks):
+    x_sink_0 = sdf_sinks.at[0, 'x'] 
+    y_sink_0 = sdf_sinks.at[0, 'y'] 
+    x_sink_1 = sdf_sinks.at[1, 'x']
+    y_sink_1 = sdf_sinks.at[1, 'y']
+
     ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
     ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
 
@@ -69,7 +74,7 @@ cmap_dust = truncate_cmap('Blues_r')
 
 #Functions to render plots individually with axis and with colour bars
 
-def subplot_gas(sdf, SECTIONAL_VIEW, ax, cbar):
+def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     if SECTIONAL_VIEW:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
                                         cmap= 'bone', ax=ax, cbar= cbar)
@@ -78,7 +83,7 @@ def subplot_gas(sdf, SECTIONAL_VIEW, ax, cbar):
     else:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
                                       cmap= 'bone', ax = ax, cbar= cbar)
-    plot_sinks(ax)
+    plot_sinks(ax, sdf_sinks)
 
     if ax.images:
         return ax.images[0]
@@ -89,32 +94,32 @@ def subplot_gas(sdf, SECTIONAL_VIEW, ax, cbar):
 
 
 
-def subplot_dust1(sdf, SECTIONAL_VIEW, ax):
+def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax):
     cmap1 = truncate_cmap('gist_heat', 0.1, 1)
     cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
                                       cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
+        plot_sinks(ax, sdf_sinks)
 
     else:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False,
                                       cmap= cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
+        plot_sinks(ax, sdf_sinks)
     
     return ax
 
 
-def subplot_dust2(sdf, SECTIONAL_VIEW, ax):
+def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax):
     cmap1 = truncate_cmap('gist_heat', 0.1, 1)
     cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
+        plot_sinks(ax, sdf_sinks)
             
     else:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap = cmap1, norm = LogNorm(1e-8, 3.6e-12))
-        plot_sinks(ax)
+        plot_sinks(ax, sdf_sinks)
     
     return ax
 
