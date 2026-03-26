@@ -69,12 +69,17 @@ def calcSigma(sdf, n, rIn, rOut):
 
 
 def azimuthBin(sdf, col, nBins):
-    azimuthBins = np.linspace(0, 2*np.pi, nBins, True)
+    azimuthBins = np.linspace(-np.pi, np.pi, nBins, True)
     partIDs = []
     
-    for i in range(nBins):
-        sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
-        partIDs.append(sdfFilt.index[sdfFilt[col] == max[sdfFilt[col]]])
+    try:
+        for i in range(nBins):
+            sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
+            partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
+            # print(sdfFilt[col])
+            
+    except IndexError:  
+        pass
         
     return partIDs
         
@@ -95,7 +100,7 @@ if __name__ == '__main__':
     # still have to merge the two sets of dust values
     print(azimuthBin(sdfGas, 'interpdustdensity', 50))
 
-    print(azimuthBin(sdfGas, 'r', 50))
+    print(azimuthBin(sdfGas, 'theta', 50))
 
     # Plotting 
     if False:
