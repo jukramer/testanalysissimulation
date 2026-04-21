@@ -1,5 +1,5 @@
 import os
-from render import render
+from old_old_render import render
 
 OUTPUT_PATH = "renders"
 # FOLDERS = ['incl_30', 'prograde', 'retrograde']

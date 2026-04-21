@@ -3,7 +3,7 @@ import pandas as pd
 import sarracen
 import matplotlib.pyplot as plt
 import os
-from render import render
+from old_old_render import render
 
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
