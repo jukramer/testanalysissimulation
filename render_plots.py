@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
-from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2, SECTIONAL_VIEW
+from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
 # TODO Clean up python files, delete irrelevant
 # TODO Pick relevant times
 n_rows = 5
@@ -48,8 +48,8 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
             ax.set_xlabel('')
             ax.set_ylabel('')
             ax.set_aspect('equal')
-            ax.set_xlim(-400, 400)
-            ax.set_ylim(-400, 400)
+            ax.set_xlim(-300, 300)
+            ax.set_ylim(-300, 300)
 
             if i == 0:
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
@@ -65,7 +65,7 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     cbar.set_label("log(rho)")
 
 
-
+SECTIONAL_VIEW = True
 render_list = ['gas', 'dust1', 'dust2']
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW, mappable_for_cbar)

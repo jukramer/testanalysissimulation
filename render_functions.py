@@ -5,7 +5,7 @@ import matplotlib.colors as mcolors
 import numpy as np
 from matplotlib.colors import LogNorm
 
-SECTIONAL_VIEW = True
+
 
 def sdf_creator(filename):
     sdf, sdf_sinks = sarracen.read_phantom(filename)
@@ -106,12 +106,12 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
-                                        cmap='bone', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='bone', norm=LogNorm(3.6e-13, 1e-9), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap='bone',
-                                        norm=LogNorm(3.6e-12, 1e-8), ax = ax , cbar = cbar)
+                                        norm=LogNorm(3.6e-13, 3.6e-9), ax = ax , cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
