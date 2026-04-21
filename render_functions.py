@@ -26,11 +26,7 @@ def sdf_creator(filename):
 sdf, sdf_sinks = sdf_creator('prograde/prograde_00010')
 
 # Creating dots for sink particles
-x_sink_0 = sdf_sinks.at[0, 'x']
-y_sink_0 = sdf_sinks.at[0, 'y']
 
-x_sink_1 = sdf_sinks.at[1, 'x']
-y_sink_1 = sdf_sinks.at[1, 'y']
 
 # print(sdf)
 # print(sdf_sinks)
@@ -38,7 +34,13 @@ y_sink_1 = sdf_sinks.at[1, 'y']
 plt.style.use('dark_background')
 
 
-def plot_sinks(ax):
+def plot_sinks(ax, sdf_sinks):
+    x_sink_0 = sdf_sinks.at[0, 'x']
+    y_sink_0 = sdf_sinks.at[0, 'y']
+
+    x_sink_1 = sdf_sinks.at[1, 'x']
+    y_sink_1 = sdf_sinks.at[1, 'y']
+    
     ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
     ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
 
@@ -59,7 +61,7 @@ cmap_dust = truncate_cmap('Blues_r')
 # sectional view at z = 0 , for sdf.itype, 1 = gas, 7 = dust (stokes = 10), 8 = dust (stokes = 1)
 
 
-def subplot_gas(sdf, SECTIONAL_VIEW, ax, cbar):
+def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     if SECTIONAL_VIEW:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
                                             cmap='bone', ax=ax, cbar=cbar)
@@ -68,7 +70,7 @@ def subplot_gas(sdf, SECTIONAL_VIEW, ax, cbar):
     else:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
                                             cmap='bone', ax=ax, cbar=cbar)
-    plot_sinks(ax)
+    plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
         return ax.images[0]
