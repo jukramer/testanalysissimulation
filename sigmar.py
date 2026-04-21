@@ -83,29 +83,27 @@ def azimuthBin(sdf, col, nBins):
     return partIDs
 
 
-def trackPart(orbitType, cols, dustType, nSnapshots=12, nAzimuthBins=50):
+def trackPart(orbitType, cols, dustType, nSnapshots=13, nAzimuthBins=50, avg=True):
+    assert dustType in {1,2}
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_00000')
+    if dustType == 1:
+        sdfDust = sdfDust1
+    else:
+        sdfDust = sdfDust2
     
     # Array dims: tracked values x particle x snapshot
     gasArray = np.zeros((len(cols), nAzimuthBins, nSnapshots))
-    dust1Array = np.zeros((len(cols), nAzimuthBins, nSnapshots))
-    dust2Array = np.zeros((len(cols), nAzimuthBins, nSnapshots))
+    dustArray = np.zeros((len(cols), nAzimuthBins, nSnapshots))
     
     # Interpolation
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
-    dustlocations = np.column_stack([sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    dustlocations = np.column_stack([sdfDust['x'], sdfDust['y'], sdfDust['z']])
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
     interpDustDensity = interp(dustlocations)
     
-    if dustType == 1:
-        idxs = azimuthBin(sdfDust1, 'theta', 50)
-    elif dustType == 2:
-        idxs = azimuthBin(sdfDust2, 'theta', 50)
-    else:
-        print('Incorrect dust type!')
-        return
+    idxs = azimuthBin(sdfDust, 'theta', 50)
     
-    for i in range(1, 12):
+    for i in range(1, nSnapshots):
         try:
             sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_000{i:02d}')
             if dustType == 1:
@@ -113,21 +111,27 @@ def trackPart(orbitType, cols, dustType, nSnapshots=12, nAzimuthBins=50):
             elif dustType == 2:
                 sdfDust = sdfDust2
                 
-            if dustType == 1:
-                dust1Array[:,:,i] = sdfDust.loc[idxs, cols].to_numpy().T
-            elif dustType == 2:
-                dust2Array[:,:,i] = sdfDust.loc[idxs, cols].to_numpy().T
+            dustArray[:,:,i] = sdfDust.loc[idxs, cols].to_numpy().T
             
         except FileNotFoundError:
-            if dustType == 1:
-                dust1Array = np.delete(dust1Array, i, 2)
-            elif dustType == 2:
-                dust2Array = np.delete(dust2Array, i, 2)
+            dustArray = np.delete(dustArray, i, 2)
             
-    return dust1Array
-    
+    print(dustArray)
+    if avg:
+        # averages amonst all particles
+        return np.mean(dustArray, 1, keepdims=True)
+    else:
+        return dustArray
+            
+            
 if __name__ == '__main__':
-    print(trackPart('retrograde', ['r', 'x'], 1).shape)
+    nSnaps = 13
+    meanValsArr = trackPart('prograde', ['r', 'x'], 1, nSnapshots=nSnaps)
+    print(meanValsArr)
+    
+    tVals = np.linspace(0, 1, nSnaps)[:,np.newaxis]
+    plt.plot(tVals, meanValsArr[1,:,:].T)
+    plt.show()
     
     # sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
