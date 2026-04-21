@@ -8,7 +8,6 @@ MASS_GAS = 4e-8
 MASS_DUST_1 = 2e-9
 MASS_DUST_2 = 2e-9
 
-
 def loadData(filepath):
     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
     
@@ -74,7 +73,7 @@ def azimuthBin(sdf, col, nBins):
     
     try:
         for i in range(nBins):
-            sdfFilt = sdf[sdf[col].between(azimuthBins[i], azimuthBins[i+1])]
+            sdfFilt = sdf[sdf['theta'].between(azimuthBins[i], azimuthBins[i+1])]
             partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
             
     except IndexError:  
@@ -92,23 +91,18 @@ def trackPart(filepath):
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
     interpDustDensity = interp(dustlocations)
     
-    
-    
-    
-    
 
 if __name__ == '__main__':
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
     # gas density interpolator:
-    # Extract particle positions and the quantity you want
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
     dust1locations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
     sdfDust1['interpdustdensity'] = interp(dust1locations)
     
     # still have to merge the two sets of dust values
-    print(azimuthBin(sdfGas, 'interpdustdensity', 50))
+    print(azimuthBin(sdfDust1, 'interpdustdensity', 50))
 
     # Plotting 
     if False:
