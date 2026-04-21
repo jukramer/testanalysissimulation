@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
-from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, SECTIONAL_VIEW
+from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, subplot_dust2, SECTIONAL_VIEW
 # TODO implement render_functions instead of test_files
 # TODO Clean up python files, delete irrelevant
 # TODO Pick relevant times
@@ -30,7 +30,7 @@ for i in range(n_rows):
         else:
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+6}')
 
-        render = subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW = True , ax = ax, cbar = False)
+        render = subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW = True , ax = ax, cbar = False)
 
         ax.set_xticks([])
         ax.set_yticks([])

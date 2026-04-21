@@ -41,8 +41,8 @@ def plot_sinks(ax, sdf_sinks):
     x_sink_1 = sdf_sinks.at[1, 'x']
     y_sink_1 = sdf_sinks.at[1, 'y']
     
-    ax.scatter(x=x_sink_0, y=y_sink_0, color='white')
-    ax.scatter(x=x_sink_1, y=y_sink_1, color='white')
+    ax.scatter(x=x_sink_0, y=y_sink_0, color='skyblue', s=10)
+    ax.scatter(x=x_sink_1, y=y_sink_1, color='red', s=10)
 
 
 # function to truncated colour maps
