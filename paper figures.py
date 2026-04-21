@@ -8,6 +8,7 @@ from old_old_render import render
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
 PARTICLE_INDICES = [1] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
+COLORS = ['tab:blue','tab:orange', 'tab:green']
 
 
 def processData(sdf, sdf_sinks):
@@ -111,9 +112,9 @@ for folder in FOLDERS:
     print(results[folder])
     results[folder] = dict(sorted(results[folder].items()))
     print(results[folder])
-    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
+    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder, color = COLORS[FOLDERS.index(folder)])
 
-# THIS IS FOR DASHED LINES
+# # THIS IS FOR DASHED LINES
 
     results2[folder] = {}
     for file in os.listdir(folder):
@@ -140,7 +141,7 @@ for folder in FOLDERS:
     print(results2[folder])
     results[folder] = dict(sorted(results[folder].items()))
     print(results2[folder])
-    plt.plot(list(results2[folder].keys()), list(results2[folder].values()), label=folder, linestyle='--')
+    plt.plot(list(results2[folder].keys()), list(results2[folder].values()), label=folder, linestyle='--',  color = COLORS[FOLDERS.index(folder)])
 
 
 
