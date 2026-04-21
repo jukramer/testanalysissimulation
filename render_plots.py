@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
-from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
-# TODO Clean up python files, delete irrelevant
+from render_functions import sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
 # TODO Pick relevant times
-# TODO fix scale
+
 n_rows = 5
 n_cols = 3
 
