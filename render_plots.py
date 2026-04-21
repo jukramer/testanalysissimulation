@@ -4,6 +4,8 @@ from matplotlib.gridspec import GridSpec
 from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
 # TODO Clean up python files, delete irrelevant
 # TODO Pick relevant times
+# TODO add titles
+# TODO fix scale
 n_rows = 5
 n_cols = 3
 
