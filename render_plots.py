@@ -4,7 +4,6 @@ from matplotlib.gridspec import GridSpec
 from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
 # TODO Clean up python files, delete irrelevant
 # TODO Pick relevant times
-# TODO add titles
 # TODO fix scale
 n_rows = 5
 n_cols = 3
@@ -25,10 +24,6 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
             axes[i, j] = fig.add_subplot(gs[i, j])
 
     cax = fig.add_subplot(gs[:, 3])
-
-
-
-
 
     for i in range(n_rows):
         for j in range(n_cols):
@@ -66,9 +61,18 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
     cbar.set_label("log(rho)")
 
+    titles = {'gas': 'Gas Density Distribution',
+              'dust1': 'Dust Species A Density Distribution (Stokes Number = 10)',
+              'dust2': 'Dust Species B Density Distribution (Stokes Number = 1)'}
+    fig.suptitle(titles[subplot], fontsize=16, y=0.98)
+    fig.subplots_adjust(top=0.90)
+
 
 SECTIONAL_VIEW = True
+
 render_list = ['gas', 'dust1', 'dust2']
+
+
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW, mappable_for_cbar)
     plt.show()
