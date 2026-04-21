@@ -7,7 +7,7 @@ from old_old_render import render
 
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
-PARTICLE_INDICES = [0] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
+PARTICLE_INDICES = [1] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
 
 
 def processData(sdf, sdf_sinks):
@@ -81,6 +81,7 @@ def loadData(filepath):
     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
 
 results = {}
+results2 = {}
 
 # #Check amount of files (timestamps)
 for folder in FOLDERS:
@@ -111,6 +112,35 @@ for folder in FOLDERS:
     results[folder] = dict(sorted(results[folder].items()))
     print(results[folder])
     plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
+
+# THIS IS FOR DASHED LINES
+
+    results2[folder] = {}
+    for file in os.listdir(folder):
+        x, r = 0, 0
+        if file.startswith(f"{folder}_"):
+            print(f"Processing {file} from {folder}")
+            x = round(int(file[-3:])*0.05, 3)
+
+            # sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
+            sdfGas, sdfDust1, sdfDust2, sdf_sinks = loadData(f'{folder}/{file}')
+            particleTypes = [sdfGas, sdfDust1, sdfDust2, sdf_sinks]
+
+            # Get the chosen particles and concatenate to list
+            chosenParticles = []
+            for particleIndex in PARTICLE_INDICES:
+                chosenParticles.append(particleTypes[2])
+            sdf = pd.concat(chosenParticles)
+
+            # Calculate characteristic radius and add to list
+            r = characteristic_radius(sdf.get('r').to_numpy(), sdf.get('mass').to_numpy())
+            results2[folder][x] = r
+
+
+    print(results2[folder])
+    results[folder] = dict(sorted(results[folder].items()))
+    print(results2[folder])
+    plt.plot(list(results2[folder].keys()), list(results2[folder].values()), label=folder, linestyle='--')
 
 
 
