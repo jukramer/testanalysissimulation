@@ -4,11 +4,12 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
 from matplotlib.colors import LogNorm
-from Test_file import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, subplot_dust2, plot_sinks, SECTIONAL_VIEW
+from render_functions import cmap_dust, sdf_creator, subplot_gas, subplot_dust1, subplot_dust2, plot_sinks, SECTIONAL_VIEW
 
 
 n_rows = 5
 n_cols = 3
+
 fig, axes  = plt.subplots(nrows= n_rows, ncols= n_cols, figsize= (7,8))
 plt.style.use('dark_background')
 mappable_for_cbar = None
@@ -32,6 +33,10 @@ for i in range(n_rows):
         ax.set_yticks([])
         ax.set_xlabel('')
         ax.set_ylabel('')
+        ax.set_aspect('equal')
+        ax.set_xlim(-400, 400)
+        ax.set_ylim(-400, 400)
+        
 
         if i == 0:
             ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad = 10)

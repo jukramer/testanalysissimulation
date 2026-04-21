@@ -96,7 +96,6 @@ if __name__ == '__main__':
     sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
     # gas density interpolator:
-    # Extract particle positions and the quantity you want
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
     dust1locations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
