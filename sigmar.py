@@ -23,6 +23,14 @@ def loadData(filepath):
     sdfDust1['mass'] = MASS_DUST_1
     sdfDust2['mass'] = MASS_DUST_2
     
+    # Interpolation
+    gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
+    interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
+    dustlocations1 = np.column_stack([sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
+    sdfDust1['interpDustDensity'] = interp(dustlocations1)
+    dustlocations2 = np.column_stack([sdfDust2['x'], sdfDust2['y'], sdfDust2['z']])
+    sdfDust2['interpDustDensity'] = interp(dustlocations2)
+    
     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
 
 
@@ -95,12 +103,6 @@ def trackPart(orbitType, cols, dustType, nSnapshots=13, nAzimuthBins=50, avg=Tru
     gasArray = np.zeros((len(cols), nAzimuthBins, nSnapshots))
     dustArray = np.zeros((len(cols), nAzimuthBins, nSnapshots))
     
-    # Interpolation
-    gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
-    dustlocations = np.column_stack([sdfDust['x'], sdfDust['y'], sdfDust['z']])
-    interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
-    interpDustDensity = interp(dustlocations)
-    
     idxs = azimuthBin(sdfDust, 'theta', 50)
     
     for i in range(1, nSnapshots):
@@ -126,30 +128,10 @@ def trackPart(orbitType, cols, dustType, nSnapshots=13, nAzimuthBins=50, avg=Tru
             
 if __name__ == '__main__':
     nSnaps = 13
-    meanValsArr = trackPart('prograde', ['r', 'x'], 1, nSnapshots=nSnaps)
+    meanValsArr = trackPart('prograde', ['interpDustDensity'], 1, nSnapshots=nSnaps)
     print(meanValsArr)
     
     tVals = np.linspace(0, 1, nSnaps)[:,np.newaxis]
-    plt.plot(tVals, meanValsArr[1,:,:].T)
+    plt.plot(tVals, meanValsArr[0,:,:].T)
     plt.show()
-    
-    # sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData('prograde/prograde_00004')
 
-    # gas density interpolator:
-    # # Extract particle positions and the quantity you want
-    # gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
-    # dust1locations = np.column_stack([ sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
-    # interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
-    # sdfDust1['interpdustdensity'] = interp(dust1locations)
-    
-    # # still have to merge the two sets of dust values
-    # print(azimuthBin(sdfGas, 'interpdustdensity', 50))
-
-    # Plotting 
-    if False:
-        rVals, sigmaVals = calcSigma(sdfDust1, 40, 10, 150)
-        plt.plot(rVals, sigmaVals)
-        plt.xlabel ('Radius [AU]')
-        plt.ylabel ('Surface density [kg/m^2]')
-        plt.yscale('log')
-        plt.show()
