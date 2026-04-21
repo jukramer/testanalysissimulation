@@ -7,7 +7,7 @@ from render import render
 
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
-PARTICLE_INDICES = [2] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
+PARTICLE_INDICES = [0] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
 
 
 def processData(sdf, sdf_sinks):
@@ -16,17 +16,21 @@ def processData(sdf, sdf_sinks):
     # Centering
     sdf['x'] = sdf['x'] - sdfSinks0.at[0, 'x']
     sdf['y'] = sdf['y'] - sdfSinks0.at[0, 'y']
+    sdf['z'] = sdf['z'] - sdfSinks0.at[0, 'z']
 
     sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y']
+    sdf_sinks.at[1, 'z'] = sdf_sinks.at[1, 'z'] - sdf_sinks.at[0, 'z']
 
     sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
+    sdf_sinks.at[0, 'z'] = sdf_sinks.at[0, 'z'] - sdf_sinks.at[0, 'z']
 
     # Add r distance column
     dfxVals = sdf['x'].to_numpy()
     dfyVals = sdf['y'].to_numpy()
-    rVals = np.sqrt(dfxVals ** 2 + dfyVals ** 2)
+    dfzVals = sdf['z'].to_numpy()
+    rVals = np.sqrt(dfxVals ** 2 + dfyVals ** 2 +dfzVals ** 2)
     sdf['r'] = rVals
     return sdf
 
