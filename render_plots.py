@@ -48,8 +48,8 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
             ax.set_xlabel('')
             ax.set_ylabel('')
             ax.set_aspect('equal')
-            ax.set_xlim(-300, 300)
-            ax.set_ylim(-300, 300)
+            ax.set_xlim(-400, 400)
+            ax.set_ylim(-400, 400)
 
             if i == 0:
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
