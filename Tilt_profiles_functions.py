@@ -63,10 +63,10 @@ def calctilt(sdf, n, rIn, rOut):
     return rVals[:-1], tiltVals
 
 
-# folder = 'incl_30'
+folder = 'incl_30'
 
-# radius = []
-# tilt = []
+radius = []
+tilt = []
 
 for file in os.listdir(folder):
     print(file)
@@ -90,18 +90,28 @@ time = [10,11,12,13,14,15]
 #plt.title('Tilt Profile')
 #plt.show()
 
-# Define the grid for interpolation
-radius_grid = np.linspace(min(radius), max(radius), 50)
-time_grid = np.linspace(min(time), max(time), 50)
+
+radius_arr = np.array(radius)   # shape: (n_times, n_radii)
+tilt_arr = np.array(tilt)       # shape: (n_times, n_radii)
+time_arr = np.array(time)       # shape: (n_times,)
+
+R_points = radius_arr.flatten()
+T_points = np.repeat(time_arr, radius_arr.shape[1])
+Z_points = tilt_arr.flatten()
+
+radius_grid = np.linspace(R_points.min(), R_points.max(), 50)
+time_grid = np.linspace(T_points.min(), T_points.max(), 50)
+
 R_grid, T_grid = np.meshgrid(radius_grid, time_grid)
+
 
 # Interpolate scattered data onto the regular grid
 # Methods: 'linear', 'cubic', 'nearest'
 inclination_grid = griddata(
-    points=(radius, time),      # known x, y coordinates
-    values=tilt,              # known z values
-    xi=(R_grid, T_grid),                  # grid points to interpolate onto
-    method='cubic'                        # smooth interpolation
+    points=(R_points, T_points),
+    values=Z_points,
+    xi=(R_grid, T_grid),
+    method='cubic'
 )
 
 # ===================================================
@@ -118,14 +128,14 @@ surf = ax.plot_surface(R_grid, T_grid, inclination_grid,
                        alpha=0.9)
 
 # Optional: overlay the original scattered points
-ax.scatter(radius, time, tilt, 
+ax.scatter(R_points, T_points, Z_points, 
            c='red', s=5, alpha=0.3, label='Original data')
 
 # Labels
-ax.set_xlabel('Radius', fontsize=12)
-ax.set_ylabel('Time', fontsize=12)
+ax.set_xlabel('Radius (AU)', fontsize=12)
+ax.set_ylabel('Snapshot', fontsize=12)
 ax.set_zlabel('Inclination (degrees)', fontsize=12)
-ax.set_title('3D Surface from Interpolated Data\n(Red dots = original scattered points)', 
+ax.set_title('Tilt Profile Over Time', 
              fontsize=14)
 
 # Color bar
@@ -137,3 +147,5 @@ ax.legend()
 
 plt.tight_layout()
 plt.show()
+
+
