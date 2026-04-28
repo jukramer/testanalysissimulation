@@ -7,7 +7,8 @@ from render import render
 
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
-PARTICLE_INDICES = [2] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
+PARTICLE_INDICES = [1] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
+COLORS = ['tab:blue','tab:orange', 'tab:green']
 
 
 def processData(sdf, sdf_sinks):
@@ -16,17 +17,21 @@ def processData(sdf, sdf_sinks):
     # Centering
     sdf['x'] = sdf['x'] - sdfSinks0.at[0, 'x']
     sdf['y'] = sdf['y'] - sdfSinks0.at[0, 'y']
+    sdf['z'] = sdf['z'] - sdfSinks0.at[0, 'z']
 
     sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y']
+    sdf_sinks.at[1, 'z'] = sdf_sinks.at[1, 'z'] - sdf_sinks.at[0, 'z']
 
     sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
+    sdf_sinks.at[0, 'z'] = sdf_sinks.at[0, 'z'] - sdf_sinks.at[0, 'z']
 
     # Add r distance column
     dfxVals = sdf['x'].to_numpy()
     dfyVals = sdf['y'].to_numpy()
-    rVals = np.sqrt(dfxVals ** 2 + dfyVals ** 2)
+    dfzVals = sdf['z'].to_numpy()
+    rVals = np.sqrt(dfxVals ** 2 + dfyVals ** 2 +dfzVals ** 2)
     sdf['r'] = rVals
     return sdf
 
@@ -77,6 +82,7 @@ def loadData(filepath):
     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
 
 results = {}
+results2 = {}
 
 # #Check amount of files (timestamps)
 for folder in FOLDERS:
@@ -106,7 +112,36 @@ for folder in FOLDERS:
     print(results[folder])
     results[folder] = dict(sorted(results[folder].items()))
     print(results[folder])
-    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder)
+    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder, color = COLORS[FOLDERS.index(folder)])
+
+# # THIS IS FOR DASHED LINES
+
+    results2[folder] = {}
+    for file in os.listdir(folder):
+        x, r = 0, 0
+        if file.startswith(f"{folder}_"):
+            print(f"Processing {file} from {folder}")
+            x = round(int(file[-3:])*0.05, 3)
+
+            # sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
+            sdfGas, sdfDust1, sdfDust2, sdf_sinks = loadData(f'{folder}/{file}')
+            particleTypes = [sdfGas, sdfDust1, sdfDust2, sdf_sinks]
+
+            # Get the chosen particles and concatenate to list
+            chosenParticles = []
+            for particleIndex in PARTICLE_INDICES:
+                chosenParticles.append(particleTypes[2])
+            sdf = pd.concat(chosenParticles)
+
+            # Calculate characteristic radius and add to list
+            r = characteristic_radius(sdf.get('r').to_numpy(), sdf.get('mass').to_numpy())
+            results2[folder][x] = r
+
+
+    print(results2[folder])
+    results[folder] = dict(sorted(results[folder].items()))
+    print(results2[folder])
+    plt.plot(list(results2[folder].keys()), list(results2[folder].values()), label=folder, linestyle='--',  color = COLORS[FOLDERS.index(folder)])
 
 
 
