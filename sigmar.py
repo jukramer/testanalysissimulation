@@ -11,6 +11,11 @@ MASS_DUST_2 = 2e-9
 def loadData(filepath):
     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
     
+    print(sdfDust1['dustfrac'])
+    print(sdfDust2['dustfrac'])
+    print(sdfDust1['dustfrac_2'])
+    print(sdfDust2['dustfrac_2'])
+    
     global sdfSinks0
     sdfSinks0 = sdf_sinks.copy()
     
@@ -22,6 +27,10 @@ def loadData(filepath):
     sdfDust1['mass'] = MASS_DUST_1
     sdfDust2['mass'] = MASS_DUST_2
     
+    print(sdfGas.keys())
+    print(sdfDust1.keys())
+    print(sdfDust2.keys())
+    
     # Interpolation
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
@@ -29,6 +38,15 @@ def loadData(filepath):
     sdfDust1['interpDustDensity'] = interp(dustlocations1)
     dustlocations2 = np.column_stack([sdfDust2['x'], sdfDust2['y'], sdfDust2['z']])
     sdfDust2['interpDustDensity'] = interp(dustlocations2)
+    
+    # Dust-to-gas ratio
+    dustfrac1Vals = sdfDust1['dustfrac'].to_numpy()
+    sdfDust1['dust-to-gas'] = dustfrac1Vals/(1-dustfrac1Vals)
+    dustfrac2Vals = sdfDust2['dustfrac'].to_numpy()
+    sdfDust2['dust-to-gas'] = dustfrac2Vals/(1-dustfrac2Vals)
+    
+    # print(sdfDust1['dust-to-gas'])
+    # print(sdfDust2['dust-to-gas'])
     
     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
 
@@ -74,13 +92,13 @@ def calcSigma(sdf, n, rIn, rOut):
     
     return rVals[:-1], sigmaVals
 
-
+       
 def azimuthBin(sdf, col, nBins):
-    azimuthBins = np.linspace(-np.pi, np.pi, nBins, True)
+    azimuthBins = np.linspace(-np.pi, np.pi, nBins + 1, True)
     partIDs = []
     
     try:
-        for i in range(nBins):
+        for i in range(nBins+1):
             sdfFilt = sdf[sdf['theta'].between(azimuthBins[i], azimuthBins[i+1])]
             partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
             
@@ -90,8 +108,13 @@ def azimuthBin(sdf, col, nBins):
     return partIDs
 
 
-def trackPart(filepath):
-    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(filepath)
+def trackPart(orbitType, cols, dustType, nSnapshots=13, nAzimuthBins=50, avg=True):
+    assert dustType in {1,2}
+    sdfGas, sdfDust1, sdfDust2, sdfSinks = loadData(f'{orbitType}/{orbitType}_00000')
+    if dustType == 1:
+        sdfDust = sdfDust1
+    else:
+        sdfDust = sdfDust2
     
     # Array dims: tracked values x particle x snapshot
     gasArray = np.zeros((len(cols), nAzimuthBins, nSnapshots))
@@ -112,20 +135,20 @@ def trackPart(filepath):
         except FileNotFoundError:
             dustArray = np.delete(dustArray, i, 2)
             
-    print(dustArray)
     if avg:
         # averages amonst all particles
         return np.mean(dustArray, 1, keepdims=True)
     else:
         return dustArray
-            
-            
+
+
 if __name__ == '__main__':
     nSnaps = 13
-    meanValsArr = trackPart('prograde', ['interpDustDensity'], 1, nSnapshots=nSnaps)
-    print(meanValsArr)
+    meanValsArr = trackPart('prograde', ['dustfrac'], 1, nSnapshots=nSnaps)
     
+    ### PLOTTING ###
     tVals = np.linspace(0, 1, nSnaps)[:,np.newaxis]
     plt.plot(tVals, meanValsArr[0,:,:].T)
     plt.show()
-
+    
+    
