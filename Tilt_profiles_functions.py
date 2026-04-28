@@ -3,6 +3,9 @@ import sarracen
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from scipy.interpolate import griddata
 
 
 def render(filename, limits=400, itype=1):
@@ -65,23 +68,72 @@ def calctilt(sdf, n, rIn, rOut):
 # radius = []
 # tilt = []
 
+for file in os.listdir(folder):
+    print(file)
+    if file.startswith(f"{folder}_") and file[11] == '1':
+        sdf, sdf_sinks = render(f"{folder}/{file}")
+        rVals, tiltVals = calctilt(sdf, 30, 10, 150)
+        radius.append(rVals)
+        tilt.append(np.rad2deg(tiltVals))
 
-# for file in os.listdir(folder):
-#     print(file)
-#     if file.startswith(f"{folder}_") and file[11] == '1':
-#         sdf, sdf_sinks = render(f"{folder}/{file}")
-#         rVals, tiltVals = calctilt(sdf, 30, 10, 150)
-#         radius.append(rVals)
-#         tilt.append(np.rad2deg(tiltVals))
+print(radius)        
+print(tilt)
 
-# print(radius)        
-# print(tilt)
-sdf, sdf_sinks = render('incl_30/incl_30_00010')
-rvals, tiltvals = calctilt(sdf, 30, 10, 150)
-plt.plot(rvals, np.rad2deg(tiltvals))
-plt.xlabel('Radius')
-plt.ylabel('Tilt (degrees)')
-plt.title('Tilt Profile')
+time = [10,11,12,13,14,15]
+
+
+#sdf, sdf_sinks = render('incl_30/incl_30_00010')
+#rvals, tiltvals = calctilt(sdf, 30, 10, 150)
+#plt.plot(rvals, np.rad2deg(tiltvals))
+#plt.xlabel('Radius')
+#plt.ylabel('Tilt (degrees)')
+#plt.title('Tilt Profile')
+#plt.show()
+
+# Define the grid for interpolation
+radius_grid = np.linspace(min(radius), max(radius), 50)
+time_grid = np.linspace(min(time), max(time), 50)
+R_grid, T_grid = np.meshgrid(radius_grid, time_grid)
+
+# Interpolate scattered data onto the regular grid
+# Methods: 'linear', 'cubic', 'nearest'
+inclination_grid = griddata(
+    points=(radius, time),      # known x, y coordinates
+    values=tilt,              # known z values
+    xi=(R_grid, T_grid),                  # grid points to interpolate onto
+    method='cubic'                        # smooth interpolation
+)
+
+# ===================================================
+# PLOT THE SURFACE
+# ===================================================
+
+fig = plt.figure(figsize=(12, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the interpolated surface
+surf = ax.plot_surface(R_grid, T_grid, inclination_grid, 
+                       cmap='viridis', 
+                       edgecolor='none',
+                       alpha=0.9)
+
+# Optional: overlay the original scattered points
+ax.scatter(radius, time, tilt, 
+           c='red', s=5, alpha=0.3, label='Original data')
+
+# Labels
+ax.set_xlabel('Radius', fontsize=12)
+ax.set_ylabel('Time', fontsize=12)
+ax.set_zlabel('Inclination (degrees)', fontsize=12)
+ax.set_title('3D Surface from Interpolated Data\n(Red dots = original scattered points)', 
+             fontsize=14)
+
+# Color bar
+cbar = fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
+cbar.set_label('Inclination', fontsize=10)
+
+# Add legend
+ax.legend()
+
+plt.tight_layout()
 plt.show()
-
-
