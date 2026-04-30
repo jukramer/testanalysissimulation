@@ -68,8 +68,8 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     cbar.set_label("log(rho)")
 
     titles = {'gas': 'Gas Density Distribution',
-              'dust1': 'Dust Species A Density Distribution (Stokes Number = 10)',
-              'dust2': 'Dust Species B Density Distribution (Stokes Number = 1)'}
+              'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
+              'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
     fig.suptitle(titles[subplot], fontsize=16, y=0.98)
     fig.subplots_adjust(top=0.90)
 
