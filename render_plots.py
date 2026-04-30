@@ -9,7 +9,11 @@ n_cols = 3
 
 
 encounter = ['prograde', 'retrograde', 'incl_30']
-Time = ['0 yr', '500 yr', '1000 yr', '1500 yr', '2000 yr']
+Time = []
+for i in range(10,21):
+    timestamp = 812*i
+    time = f'{timestamp:0d} years'
+    Time.append(time)
 
 mappable_for_cbar = None
 def render_plot(subplot, sectional_view, mappable_for_cbar):
@@ -71,8 +75,9 @@ SECTIONAL_VIEW = True
 
 render_list = ['gas', 'dust1', 'dust2']
 
-
+#plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW, mappable_for_cbar)
     plt.show()
+    #plt.savefig(plot_name_list[plot])
 
