@@ -149,3 +149,5 @@ plt.tight_layout()
 plt.show()
 
 
+colours = ['navy','dodgerblue','teal','springreen','darkgreen','olivedrab']
+
