@@ -8,7 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.interpolate import griddata
 
 
-def render(filename, limits=400, itype=1):
+def render(filename, limits=400, itype = 1):
     """
     Limits show limits of plot, itype refers to gas / dust / dust and finally sectionview enables for a column density or
     """
