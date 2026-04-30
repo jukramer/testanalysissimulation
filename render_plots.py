@@ -27,10 +27,10 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     for i in range(n_rows):
         for j in range(n_cols):
             ax = axes[i, j]
-            if (i+6)< 10:
+            if (i+10)< 10:
                 sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i+6}')
             else:
-                sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+6}')
+                sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+10}')
 
             if subplot == 'gas':
                 render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW = sectional_view , ax = ax, cbar = False)
@@ -67,7 +67,7 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     fig.subplots_adjust(top=0.90)
 
 
-SECTIONAL_VIEW = True
+SECTIONAL_VIEW = False
 
 render_list = ['gas', 'dust1', 'dust2']
 
