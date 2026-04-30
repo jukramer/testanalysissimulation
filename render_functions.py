@@ -65,12 +65,12 @@ cmap_dust = truncate_cmap('Blues_r')
 def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     if SECTIONAL_VIEW:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                            cmap='bone', ax=ax, cbar=cbar)
+                                            cmap='gist_heat', ax=ax, cbar=cbar)
 
 
     else:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                            cmap='bone', ax=ax, cbar=cbar)
+                                            cmap='gist_heat', ax=ax, cbar=cbar)
     plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:

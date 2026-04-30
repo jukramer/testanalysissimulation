@@ -4,7 +4,6 @@ from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
 # TODO update renders once all snapshots ready
 # TODO adjust scale
-# TODO change colormap to prasad
 # TODO change scale to g/cm^3
 
 n_rows = 5
