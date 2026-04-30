@@ -17,6 +17,9 @@ def render(filename, limits=400, itype = 1):
     sdf, sdf_sinks = sarracen.read_phantom(filename)
     sdf.calc_density()
 
+    if itype is not None:
+        sdf = sdf[sdf['itype'] == itype].copy()
+
     sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
     sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
     sdf['z'] = sdf['z'] - sdf_sinks.at[0, 'z']
@@ -154,29 +157,43 @@ plt.show()
 # PLOT THE 2D graphs
 # ===================================================
 
-colours = ['navy','dodgerblue','teal','springgreen','darkgreen','olivedrab']
 
-#Gas type
-plt.figure(figsize=(10, 6))
-rgas, tgas = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 200, particle_type = 1)
-for i, colour in enumerate(colours):
-    plt.plot(rgas[i], tgas[i], color=colour, label=f'Gas Snapshot {time[i]}', linestyle='-')
+rgas, tgas = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 170, particle_type = 1)
+rdust1, tdust1 = tilt_iter(folder = 'incl_30', n = 25, rIn = 25, rOut = 80, particle_type = 7)
+rdust2, tdust2 = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 100, particle_type = 8)
 
-#Dust type 1
-rdust1, tdust1 = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 200, particle_type = 7)
-for i, colour in enumerate(colours):
-    plt.plot(rdust1[i], tdust1[i], color=colour, label=f'Dust Type 1 Snapshot {time[i]}', linestyle='--')
+for i, time in enumerate(time):
+    plt.figure(figsize=(10, 6))
 
-#Dust type 2
-rdust2, tdust2 = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 200, particle_type = 8)
-for i, colour in enumerate(colours):
-    plt.plot(rdust2[i], tdust2[i], color=colour, label=f'Dust Type 2 Snapshot {time[i]}', linestyle=':')
+    plt.plot(rgas[i], tgas[i], color= 'blue', label=f'Gas ')
+    plt.plot(rdust1[i], tdust1[i], color='green', label=f'Dust Type 1 (Stokes Number = 10) ')
+    plt.plot(rdust2[i], tdust2[i], color = 'red', label=f'Dust Type 2 (Stokes Number = 1) ')
+
+    plt.xlabel('Radius (AU)', fontsize=12)
+    plt.ylabel('Inclination (degrees)', fontsize=12)
+    plt.title(f'Tilt Profile Snapshot {time}', fontsize=14)
+    plt.ylim(24, 38)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
 
-plt.xlabel('Radius (AU)', fontsize=12)
-plt.ylabel('Inclination (degrees)', fontsize=12)
-plt.title('Tilt Profile Over Time', fontsize=14)
-plt.legend()
-plt.tight_layout()
-plt.show()
+# #Gas type
+# plt.figure(figsize=(10, 6))
+
+# for i, colour in enumerate(colours):
+#     plt.plot(rgas[i], tgas[i], color=colour, label=f'Gas Snapshot {time[i]}', linestyle='-')
+
+# #Dust type 1
+
+# for i, colour in enumerate(colours):
+#     plt.plot(rdust1[i], tdust1[i], color=colour, label=f'Dust Type 1 Snapshot {time[i]}', linestyle='--')
+
+# #Dust type 2
+
+# for i, colour in enumerate(colours):
+#     plt.plot(rdust2[i], tdust2[i], color=colour, label=f'Dust Type 2 Snapshot {time[i]}', linestyle=':')
+
+
+
 
