@@ -8,6 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.interpolate import griddata
 
 
+
 def render(filename, limits=400, itype = 1):
     """
     Limits show limits of plot, itype refers to gas / dust / dust and finally sectionview enables for a column density or
@@ -63,21 +64,21 @@ def calctilt(sdf, n, rIn, rOut):
     return rVals[:-1], tiltVals
 
 
-folder = 'incl_30'
+def tilt_iter(folder = 'incl_30', n = 30, rIn=10, rOut=150, particle_type=None):
+    radius = []
+    tilt = []
 
-radius = []
-tilt = []
+    for file in os.listdir(folder):
+        print(file)
+        if file.startswith(f"{folder}_") and file[11] == '1':
+            sdf, sdf_sinks = render(f"{folder}/{file}", itype = particle_type)
+            rVals, tiltVals = calctilt(sdf, n, rIn, rOut)
+            radius.append(rVals)
+            tilt.append(np.rad2deg(tiltVals))
 
-for file in os.listdir(folder):
-    print(file)
-    if file.startswith(f"{folder}_") and file[11] == '1':
-        sdf, sdf_sinks = render(f"{folder}/{file}")
-        rVals, tiltVals = calctilt(sdf, 30, 10, 150)
-        radius.append(rVals)
-        tilt.append(np.rad2deg(tiltVals))
+    return radius, tilt
 
-print(radius)        
-print(tilt)
+radius, tilt = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 150, particle_type = None)
 
 time = [10,11,12,13,14,15]
 
@@ -149,5 +150,33 @@ plt.tight_layout()
 plt.show()
 
 
-colours = ['navy','dodgerblue','teal','springreen','darkgreen','olivedrab']
+# ===================================================
+# PLOT THE 2D graphs
+# ===================================================
+
+colours = ['navy','dodgerblue','teal','springgreen','darkgreen','olivedrab']
+
+#Gas type
+plt.figure(figsize=(10, 6))
+rgas, tgas = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 200, particle_type = 1)
+for i, colour in enumerate(colours):
+    plt.plot(rgas[i], tgas[i], color=colour, label=f'Gas Snapshot {time[i]}', linestyle='-')
+
+#Dust type 1
+rdust1, tdust1 = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 200, particle_type = 7)
+for i, colour in enumerate(colours):
+    plt.plot(rdust1[i], tdust1[i], color=colour, label=f'Dust Type 1 Snapshot {time[i]}', linestyle='--')
+
+#Dust type 2
+rdust2, tdust2 = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 200, particle_type = 8)
+for i, colour in enumerate(colours):
+    plt.plot(rdust2[i], tdust2[i], color=colour, label=f'Dust Type 2 Snapshot {time[i]}', linestyle=':')
+
+
+plt.xlabel('Radius (AU)', fontsize=12)
+plt.ylabel('Inclination (degrees)', fontsize=12)
+plt.title('Tilt Profile Over Time', fontsize=14)
+plt.legend()
+plt.tight_layout()
+plt.show()
 
