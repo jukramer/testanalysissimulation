@@ -91,5 +91,4 @@ render_list = ['gas', 'dust1', 'dust2']
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW, mappable_for_cbar)
     plt.show()
-    #plt.savefig(plot_name_list[plot])
 
