@@ -173,7 +173,7 @@ def trackPart(orbitType, cols, dustType, nSnapshots=13, nAzimuthBins=50, avg=Tru
 
 
 if __name__ == '__main__':
-    nSnaps = 17
+    nSnaps = 21
     meanValsArr = trackPart('retrograde', ['dust-to-gas'], 1, nSnapshots=nSnaps)
     
         
@@ -182,4 +182,3 @@ if __name__ == '__main__':
     plt.plot(tVals, meanValsArr[0,:,:].T)
     plt.yscale('log')
     plt.show()
-    
