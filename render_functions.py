@@ -5,7 +5,7 @@ import matplotlib.colors as mcolors
 import numpy as np
 from matplotlib.colors import LogNorm
 
-scaling =  1.3295454545 * 10**20 # SM/AU^3 --> 1,3295454545×10²⁰ g/cm^3
+scaling =   5.94 * 10**-7 # SM/AU^3 --> 1,3295454545×10²⁰ g/cm^3
 
 def sdf_creator(filename):
     sdf, sdf_sinks = sarracen.read_phantom(filename)
@@ -70,7 +70,7 @@ def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
 
     else:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                            cmap='gist_heat', ax=ax, cbar=cbar)
+                                            cmap='gist_heat', ax=ax,cbar=cbar)
     plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
@@ -86,12 +86,12 @@ def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax,cbar):
     #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
-                                        cmap='gist_heat', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='gist_heat', norm = LogNorm(1e-2, 1e2), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False,
-                                        cmap='gist_heat', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='gist_heat', norm = LogNorm(1e-2, 1e2), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
