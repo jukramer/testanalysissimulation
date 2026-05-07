@@ -14,7 +14,7 @@ def sdf_creator(filename):
     sdf.calc_density()
 
     # Physical column density proxy
-    sdf['sigma'] = sdf['rho'] * scaling_col
+    sdf['sigma'] = sdf['rho']
 
     # Prevent log10(0)
     sdf['sigma'] = np.clip(sdf['sigma'], 1e-30, None)
@@ -71,28 +71,13 @@ cmap_dust = truncate_cmap('Blues_r')
 # ---------------------------------------------------------
 
 def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
-
-    kwargs = dict(
-        xlim=(-400, 400),
-        ylim=(-400, 400),
-        cmap='hot',
-        ax=ax,
-        cbar=cbar,
-        vmin=-3,   # log10(1e-3)
-        vmax=0     # log10(1e0)
-    )
-
     if SECTIONAL_VIEW:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True, xsec=0.00,
                                             cmap='hot', ax=ax, cbar=cbar)
 
-    sdf[sdf.itype == 1].render(
-        'log_sigma',
-        **kwargs
-    )
 
     else:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True,
                                             cmap='hot', ax=ax,cbar=cbar)
     plot_sinks(ax, sdf_sinks=sdf_sinks)
 
@@ -105,8 +90,6 @@ def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
 
 
 def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax,cbar):
-    #cmap1 = truncate_cmap('gist_heat', 0.1, 1)
-    #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False, xsec=0.00,
                                         cmap='hot', norm = LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
@@ -114,7 +97,7 @@ def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax,cbar):
 
     else:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False,
-                                        cmap='gist_heat', norm = LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='hot', norm = LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
@@ -130,11 +113,11 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, xsec=0.00,
-                                        cmap='gist_heat', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='hot', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, cmap='gist_heat',
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, cmap='hot',
                                         norm=LogNorm(3.6e-12, 1e-8), ax = ax , cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 

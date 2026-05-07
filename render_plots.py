@@ -4,7 +4,6 @@ from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_dust2
 
 # TODO adjust scale (keep SM/AU^3 but make sure they correspond to same equivalent scale)
-# TODO get back old file
 # TODO get rid of spacing
 # TODO indicate scale in renders (800UA, 300AU)
 
@@ -97,6 +96,6 @@ render_list = ['gas', 'dust1', 'dust2']
 
 #plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
-    render_plot(plot, SECTIONAL_VIEW, mappable_for_cbar)
+    render_plot(plot, SECTIONAL_VIEW)
     plt.show()
 
