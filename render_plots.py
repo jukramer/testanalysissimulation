@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
-# TODO update renders once all snapshots ready
+
 # TODO adjust scale
 # TODO change scale to g/cm^3
 
@@ -12,10 +12,12 @@ n_cols = 3
 
 encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
+
 for i in range(10,21):
     timestamp = 812*i
     time = f'{timestamp:0d} years'
     Time.append(time)
+
 
 mappable_for_cbar = None
 def render_plot(subplot, sectional_view, mappable_for_cbar):
@@ -30,13 +32,21 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
 
     cax = fig.add_subplot(gs[:, 3])
 
+    selected_snapshots = [10,11,12,14,17]
+    Snapshot = []
     for i in range(n_rows):
+        snapshot = selected_snapshots[i]
+        Snapshot.append(snapshot)
         for j in range(n_cols):
             ax = axes[i, j]
-            if (i+10)< 10:
-                sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i+6}')
-            else:
-                sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+10}')
+            sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{selected_snapshots[i]}')
+
+            # if (i+10)< 10:
+            #     sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i+6}')
+            #
+            # else:
+            #     sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+10}')
+
 
             if subplot == 'gas':
                 render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW = sectional_view , ax = ax, cbar = False)
@@ -57,7 +67,7 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
 
             if j == 0:
-                ax.text(-0.12, 0.5, Time[i], transform=ax.transAxes,
+                ax.text(-0.12, 0.5, f'{Time[i]}, {Snapshot[i]}', transform=ax.transAxes,
                         rotation=90, va='center', ha='center', fontsize=10)
 
             if mappable_for_cbar is None:
