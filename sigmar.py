@@ -1,37 +1,41 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sarracen
-import matplotlib.pyplot as plt
 from scipy.interpolate import NearestNDInterpolator
 
 MASS_GAS = 4e-8
 MASS_DUST_1 = 2e-9
 MASS_DUST_2 = 2e-9
+GRAV_PARAM = 1.2371e20 # Solar 
+
+n = 0
+
 
 def loadData(filepath):
     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
-    
-    print(sdfDust1['dustfrac'])
-    print(sdfDust2['dustfrac'])
-    print(sdfDust1['dustfrac_2'])
-    print(sdfDust2['dustfrac_2'])
+    # print(sdfDust1.keys())
     
     global sdfSinks0
     sdfSinks0 = sdf_sinks.copy()
+    
+    global n
+    n+=1
+    # print(f'------------- {n} --------------')
     
     sdfGas = processData(sdfGas, sdf_sinks)
     sdfDust1 = processData(sdfDust1, sdf_sinks)
     sdfDust2 = processData(sdfDust2, sdf_sinks)
     
+    # print(sdfGas.keys())
+    # print(sdfDust1.keys())
+    # print(sdfDust2.keys())
+    
     sdfGas['mass'] = MASS_GAS
     sdfDust1['mass'] = MASS_DUST_1
     sdfDust2['mass'] = MASS_DUST_2
     
-    print(sdfGas.keys())
-    print(sdfDust1.keys())
-    print(sdfDust2.keys())
-    
-    # Interpolation
+    # Interpolations
     gaslocations = np.column_stack([sdfGas['x'], sdfGas['y'], sdfGas['z']])
     interp = NearestNDInterpolator(gaslocations, sdfGas['rho'] )
     dustlocations1 = np.column_stack([sdfDust1['x'], sdfDust1['y'], sdfDust1['z']])
@@ -40,13 +44,8 @@ def loadData(filepath):
     sdfDust2['interpDustDensity'] = interp(dustlocations2)
     
     # Dust-to-gas ratio
-    dustfrac1Vals = sdfDust1['dustfrac'].to_numpy()
-    sdfDust1['dust-to-gas'] = dustfrac1Vals/(1-dustfrac1Vals)
-    dustfrac2Vals = sdfDust2['dustfrac'].to_numpy()
-    sdfDust2['dust-to-gas'] = dustfrac2Vals/(1-dustfrac2Vals)
-    
-    # print(sdfDust1['dust-to-gas'])
-    # print(sdfDust2['dust-to-gas'])
+    sdfDust1['dust-to-gas'] = sdfDust1['rho'].to_numpy()/sdfDust1['interpDustDensity'].to_numpy()
+    sdfDust2['dust-to-gas'] = sdfDust2['rho'].to_numpy()/sdfDust2['interpDustDensity'].to_numpy()
     
     return sdfGas, sdfDust1, sdfDust2, sdf_sinks
 
@@ -55,6 +54,7 @@ def processData(sdf, sdf_sinks):
     sdf.calc_density()
     
     # Centering
+    # Position
     sdf['x'] = sdf['x'] - sdfSinks0.at[0, 'x']
     sdf['y'] = sdf['y'] - sdfSinks0.at[0, 'y']
 
@@ -64,6 +64,27 @@ def processData(sdf, sdf_sinks):
     sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
     
+    # Velocity TODO: No velocity data on all snapshots yet
+    try:
+        sdf['vx'] = sdf['vx'] - sdfSinks0.at[0, 'vx']
+        sdf['vy'] = sdf['vy'] - sdfSinks0.at[0, 'vy']
+        sdf['vz'] = sdf['vz'] - sdfSinks0.at[0, 'vz']
+
+        sdf_sinks.at[1, 'vx'] = sdf_sinks.at[1, 'vx'] - sdf_sinks.at[0, 'vx']
+        sdf_sinks.at[1, 'vy'] = sdf_sinks.at[1, 'vy'] - sdf_sinks.at[0, 'vy']
+        sdf_sinks.at[1, 'vz'] = sdf_sinks.at[1, 'vz'] - sdf_sinks.at[0, 'vz']
+
+        sdf_sinks.at[0, 'vx'] = sdf_sinks.at[0, 'vx'] - sdf_sinks.at[0, 'vx']
+        sdf_sinks.at[0, 'vy'] = sdf_sinks.at[0, 'vy'] - sdf_sinks.at[0, 'vy']
+        sdf_sinks.at[0, 'vz'] = sdf_sinks.at[0, 'vz'] - sdf_sinks.at[0, 'vz']
+        
+        sdf['v'] = np.sqrt(sdf['vx'].to_numpy()**2 + sdf['vy'].to_numpy()**2 + sdf['vz'].to_numpy()**2)
+        
+        # print('True')
+    except:
+        # print('false')
+        pass
+        
     # Add polar coord columns
     dfxVals = sdf['x'].to_numpy()
     dfyVals = sdf['y'].to_numpy()
@@ -72,6 +93,15 @@ def processData(sdf, sdf_sinks):
     
     thetaVals = np.arctan2(dfxVals, dfyVals)
     sdf['theta'] = thetaVals
+    
+    # Remove escaped particles
+    # idxVals = []
+    # EPotVals = -GRAV_PARAM/sdf['r'].to_numpy()
+    # EKinVals = sdf['v'].to_numpy()**2/2
+    # ETotVals = EPotVals + EKinVals
+    # print(ETotVals[np.where(ETotVals < 0)].shape)
+    
+    # EKinVals = sdf[]
     
     return sdf
 
@@ -143,12 +173,13 @@ def trackPart(orbitType, cols, dustType, nSnapshots=13, nAzimuthBins=50, avg=Tru
 
 
 if __name__ == '__main__':
-    nSnaps = 13
-    meanValsArr = trackPart('prograde', ['dustfrac'], 1, nSnapshots=nSnaps)
+    nSnaps = 17
+    meanValsArr = trackPart('retrograde', ['dust-to-gas'], 1, nSnapshots=nSnaps)
     
+        
     ### PLOTTING ###
     tVals = np.linspace(0, 1, nSnaps)[:,np.newaxis]
     plt.plot(tVals, meanValsArr[0,:,:].T)
+    plt.yscale('log')
     plt.show()
-    
     
