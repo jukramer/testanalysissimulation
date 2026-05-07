@@ -1,10 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
-from render_functions import sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
+from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_dust2
 
-# TODO adjust scale
-# TODO change scale to g/cm^3
+
+sdf, sdf_sinks = sdf_creator('prograde/prograde_00010')
+
+for itype, name in [(1, 'gas'), (7, 'dust1'), (8, 'dust2')]:
+    data = sdf[sdf.itype == itype]['sigma']
+    print(f"\n=== {name} (itype={itype}) ===")
+    print(f"  min:    {data.min():.3e}")
+    print(f"  max:    {data.max():.3e}")
+    print(f"  mean:   {data.mean():.3e}")
+    print(f"  median: {data.median():.3e}")
+
 
 n_rows = 5
 n_cols = 3
@@ -12,15 +21,14 @@ n_cols = 3
 
 encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
-
-for i in range(10,21):
-    timestamp = 812*i
-    time = f'{timestamp:0d} years'
+for i in range(10, 15):  # only 5 rows
+    timestamp = 812 * i
+    time = f'{timestamp:d} years'
     Time.append(time)
 
 
-mappable_for_cbar = None
-def render_plot(subplot, sectional_view, mappable_for_cbar):
+def render_plot(subplot, sectional_view):
+    mappable_for_cbar = None
 
     fig = plt.figure(figsize=(8, 10))
     gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.05, hspace=0.05)
@@ -49,10 +57,10 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
 
 
             if subplot == 'gas':
-                render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW = sectional_view , ax = ax, cbar = False)
-            if subplot == 'dust1':
+                render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
+            elif subplot == 'dust1':
                 render = subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
-            if subplot == 'dust2':
+            elif subplot == 'dust2':
                 render = subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
 
             ax.set_xticks([])
@@ -70,15 +78,18 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
                 ax.text(-0.12, 0.5, f'{Time[i]}, {Snapshot[i]}', transform=ax.transAxes,
                         rotation=90, va='center', ha='center', fontsize=10)
 
-            if mappable_for_cbar is None:
+            if mappable_for_cbar is None and render is not None:
                 mappable_for_cbar = render
 
-    cbar = fig.colorbar(mappable_for_cbar, cax=cax)
-    cbar.set_label("log(rho)")
+    if mappable_for_cbar is not None:
+        cbar = fig.colorbar(mappable_for_cbar, cax=cax)
+        cbar.set_label(r'log($\Sigma$) [g/cm$^2$]')
 
-    titles = {'gas': 'Gas Density Distribution',
-              'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
-              'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
+    titles = {
+        'gas':   'Gas Column Density Distribution',
+        'dust1': 'Dust Type 1 Column Density Distribution (Stokes Number = 10)',
+        'dust2': 'Dust Type 2 Column Density Distribution (Stokes Number = 1)'
+    }
     fig.suptitle(titles[subplot], fontsize=16, y=0.98)
     fig.subplots_adjust(top=0.90)
 
@@ -87,8 +98,8 @@ SECTIONAL_VIEW = True
 
 render_list = ['gas', 'dust1', 'dust2']
 
-#plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
-    render_plot(plot, SECTIONAL_VIEW, mappable_for_cbar)
+    render_plot(plot, SECTIONAL_VIEW)
     plt.show()
+    #plt.savefig(plot_name_list[plot])
 
