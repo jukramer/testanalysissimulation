@@ -3,7 +3,8 @@ import numpy as np
 from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_dust2
 
-# TODO adjust scale
+# TODO adjust scale (keep SM/AU^3 but make sure they correspond to same equivalent scale)
+# TODO get back old file
 # TODO get rid of spacing
 # TODO indicate scale in renders (800UA, 300AU)
 
