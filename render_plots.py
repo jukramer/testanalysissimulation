@@ -73,7 +73,7 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     fig.subplots_adjust(top=0.90)
 
 
-SECTIONAL_VIEW = False
+SECTIONAL_VIEW = True
 
 render_list = ['gas', 'dust1', 'dust2']
 
