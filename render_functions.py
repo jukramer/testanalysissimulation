@@ -5,11 +5,12 @@ import matplotlib.colors as mcolors
 import numpy as np
 from matplotlib.colors import LogNorm
 
-
+scaling =  1.3295454545 * 10**20 # SM/AU^3 --> 1,3295454545×10²⁰ g/cm^3
 
 def sdf_creator(filename):
     sdf, sdf_sinks = sarracen.read_phantom(filename)
     sdf.calc_density()
+    sdf['rho'] = sdf['rho'] * scaling
 
     sdf['x'] = sdf['x'] - sdf_sinks.at[0, 'x']
     sdf['y'] = sdf['y'] - sdf_sinks.at[0, 'y']
@@ -64,12 +65,12 @@ cmap_dust = truncate_cmap('Blues_r')
 def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     if SECTIONAL_VIEW:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True, xsec=0.00,
-                                            cmap='bone', ax=ax, cbar=cbar)
+                                            cmap='gist_heat', ax=ax, cbar=cbar)
 
 
     else:
         render = sdf[sdf.itype == 1].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=True,
-                                            cmap='bone', ax=ax, cbar=cbar)
+                                            cmap='gist_heat', ax=ax, cbar=cbar)
     plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
@@ -85,12 +86,12 @@ def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax,cbar):
     #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
-                                        cmap='bone', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='gist_heat', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
         ax = sdf[sdf.itype == 7].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False,
-                                        cmap='bone', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='gist_heat', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
@@ -106,11 +107,11 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, xsec=0.00,
-                                        cmap='bone', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='gist_heat', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap='bone',
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 400, 400), ylim=(-400, 400), log_scale=False, cmap='gist_heat',
                                         norm=LogNorm(3.6e-12, 1e-8), ax = ax , cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 

@@ -2,14 +2,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
-# TODO Pick relevant times
+# TODO update renders once all snapshots ready
+# TODO adjust scale
+# TODO change scale to g/cm^3
 
 n_rows = 5
 n_cols = 3
 
 
 encounter = ['prograde', 'retrograde', 'incl_30']
-Time = ['0 yr', '500 yr', '1000 yr', '1500 yr', '2000 yr']
+Time = []
+for i in range(10,21):
+    timestamp = 812*i
+    time = f'{timestamp:0d} years'
+    Time.append(time)
 
 mappable_for_cbar = None
 def render_plot(subplot, sectional_view, mappable_for_cbar):
@@ -27,10 +33,10 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     for i in range(n_rows):
         for j in range(n_cols):
             ax = axes[i, j]
-            if (i+6)< 10:
+            if (i+10)< 10:
                 sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i+6}')
             else:
-                sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+6}')
+                sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+10}')
 
             if subplot == 'gas':
                 render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW = sectional_view , ax = ax, cbar = False)
@@ -61,18 +67,19 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     cbar.set_label("log(rho)")
 
     titles = {'gas': 'Gas Density Distribution',
-              'dust1': 'Dust Species A Density Distribution (Stokes Number = 10)',
-              'dust2': 'Dust Species B Density Distribution (Stokes Number = 1)'}
+              'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
+              'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
     fig.suptitle(titles[subplot], fontsize=16, y=0.98)
     fig.subplots_adjust(top=0.90)
 
 
-SECTIONAL_VIEW = True
+SECTIONAL_VIEW = False
 
 render_list = ['gas', 'dust1', 'dust2']
 
-
+#plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW, mappable_for_cbar)
     plt.show()
+    #plt.savefig(plot_name_list[plot])
 
