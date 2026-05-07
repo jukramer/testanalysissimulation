@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1,  subplot_dust2
-# TODO Pick relevant times
+# TODO update renders once all snapshots ready
+# TODO adjust scale
+# TODO change scale to g/cm^3
 
 n_rows = 5
 n_cols = 3
@@ -65,13 +67,13 @@ def render_plot(subplot, sectional_view, mappable_for_cbar):
     cbar.set_label("log(rho)")
 
     titles = {'gas': 'Gas Density Distribution',
-              'dust1': 'Dust Species A Density Distribution (Stokes Number = 10)',
-              'dust2': 'Dust Species B Density Distribution (Stokes Number = 1)'}
+              'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
+              'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
     fig.suptitle(titles[subplot], fontsize=16, y=0.98)
     fig.subplots_adjust(top=0.90)
 
 
-SECTIONAL_VIEW =True
+SECTIONAL_VIEW = False
 
 render_list = ['gas', 'dust1', 'dust2']
 
