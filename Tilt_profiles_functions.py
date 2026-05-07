@@ -73,7 +73,7 @@ def tilt_iter(folder = 'incl_30', n = 30, rIn=10, rOut=150, particle_type=None):
 
     for file in os.listdir(folder):
         print(file)
-        if file.startswith(f"{folder}_") and file[11] == '1':
+        if file.startswith(f"{folder}_") and (file[11] == '1' or file[11] == '2'):
             sdf, sdf_sinks = render(f"{folder}/{file}", itype = particle_type)
             rVals, tiltVals = calctilt(sdf, n, rIn, rOut)
             radius.append(rVals)
@@ -83,7 +83,7 @@ def tilt_iter(folder = 'incl_30', n = 30, rIn=10, rOut=150, particle_type=None):
 
 radius, tilt = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 150, particle_type = None)
 
-time = [10,11,12,13,14,15]
+time = [10,11,12,13,14,15,16,17,18,19,20]
 
 
 #sdf, sdf_sinks = render('incl_30/incl_30_00010')
