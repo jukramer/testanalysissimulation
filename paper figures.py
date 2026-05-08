@@ -146,6 +146,6 @@ for folder in FOLDERS:
 
 
 plt.xlabel("time [scaled units]")
-plt.ylabel("r63,dust [au]")
+plt.ylabel("r63[au]")
 plt.legend()
 plt.show()
