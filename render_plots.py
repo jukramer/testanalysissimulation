@@ -22,6 +22,13 @@ def render_plot(subplot, sectional_view):
     mappable_for_cbar = None
 
     fig = plt.figure(figsize=(8, 12), facecolor='white')
+    if subplot == 'gas':
+        scale = 600
+    if subplot == 'dust1':
+        scale = 300
+    if subplot == 'dust2':
+        scale =200
+    fig.text(0.05, 0.95,  f'scale: {scale}x{scale} AU', ha='left',va='top',color='black',fontsize=9)
     gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.02, hspace=0.01)
 
     axes = np.empty((n_rows, n_cols), dtype=object)
@@ -52,6 +59,7 @@ def render_plot(subplot, sectional_view):
                 ax.set_xlim(-300, 300)
                 ax.set_ylim(-300, 300)
                 ax.set_aspect('equal', adjustable='box')
+
             if subplot == 'dust1':
                 render = subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
                 ax.set_xlim(-150, 150)
