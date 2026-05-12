@@ -2,9 +2,7 @@ import sarracen
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
-
-# Column density scaling: M_sun/AU^2 --> g/cm^2
-scaling_col = 8.89e6
+from matplotlib.colors import LogNorm
 
 plt.style.use('dark_background')
 
@@ -16,7 +14,7 @@ def sdf_creator(filename):
     sdf.calc_density()
 
     # Physical column density proxy
-    sdf['sigma'] = sdf['rho'] * scaling_col
+    sdf['sigma'] = sdf['rho']
 
     # Prevent log10(0)
     sdf['sigma'] = np.clip(sdf['sigma'], 1e-30, None)
@@ -31,43 +29,38 @@ def sdf_creator(filename):
     sdf_sinks.at[1, 'x'] = sdf_sinks.at[1, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[1, 'y'] = sdf_sinks.at[1, 'y'] - sdf_sinks.at[0, 'y']
 
-    sdf_sinks.at[0, 'x'] = 0.0
-    sdf_sinks.at[0, 'y'] = 0.0
+    sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
+    sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
 
     return sdf, sdf_sinks
 
 
-# Load snapshot
 sdf, sdf_sinks = sdf_creator('prograde/prograde_00010')
 
 
 def plot_sinks(ax, sdf_sinks):
-    ax.scatter(
-        x=sdf_sinks.at[0, 'x'],
-        y=sdf_sinks.at[0, 'y'],
-        color='skyblue',
-        s=10
-    )
+    x_sink_0 = sdf_sinks.at[0, 'x']
+    y_sink_0 = sdf_sinks.at[0, 'y']
 
-    ax.scatter(
-        x=sdf_sinks.at[1, 'x'],
-        y=sdf_sinks.at[1, 'y'],
-        color='red',
-        s=10
-    )
+    x_sink_1 = sdf_sinks.at[1, 'x']
+    y_sink_1 = sdf_sinks.at[1, 'y']
+
+    ax.scatter(x=x_sink_0, y=y_sink_0, color='skyblue', s=10)
+    ax.scatter(x=x_sink_1, y=y_sink_1, color='red', s=10)
 
 
+# function to truncated colour maps
 def truncate_cmap(cmap_name, minval=0.0, maxval=1.0, n=512):
     cmap = plt.get_cmap(cmap_name)
 
     new_cmap = mcolors.LinearSegmentedColormap.from_list(
         f"trunc_{cmap_name}",
-        cmap(np.linspace(minval, maxval, n))
-    )
-
+        cmap(np.linspace(minval, maxval, n)))
     new_cmap.set_under(color='black')
 
     return new_cmap
+
+cmap_dust = truncate_cmap('Blues_r')
 
 
 # ---------------------------------------------------------
@@ -78,26 +71,15 @@ def truncate_cmap(cmap_name, minval=0.0, maxval=1.0, n=512):
 # ---------------------------------------------------------
 
 def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
-
-    kwargs = dict(
-        xlim=(-400, 400),
-        ylim=(-400, 400),
-        cmap='gist_heat',
-        ax=ax,
-        cbar=cbar,
-        vmin=-3,   # log10(1e-3)
-        vmax=0     # log10(1e0)
-    )
-
     if SECTIONAL_VIEW:
-        kwargs['xsec'] = 0.00
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True, xsec=0.00,
+                                            cmap='hot', ax=ax, cbar=cbar)
 
-    sdf[sdf.itype == 1].render(
-        'log_sigma',
-        **kwargs
-    )
 
-    plot_sinks(ax, sdf_sinks)
+    else:
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True,
+                                            cmap='hot', ax=ax,cbar=cbar)
+    plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
         return ax.images[0]
@@ -107,86 +89,49 @@ def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     return None
 
 
-def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
-
-    kwargs = dict(
-        xlim=(-400, 400),
-        ylim=(-400, 400),
-        cmap='gist_heat',
-        ax=ax,
-        cbar=cbar,
-        vmin=-4,   # log10(1e-4)
-        vmax=0
-    )
-
+def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax,cbar):
     if SECTIONAL_VIEW:
-        kwargs['xsec'] = 0.00
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False, xsec=0.00,
+                                        cmap='hot', norm = LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+        plot_sinks(ax, sdf_sinks=sdf_sinks)
 
-    sdf[sdf.itype == 7].render(
-        'log_sigma',
-        **kwargs
-    )
-
-    plot_sinks(ax, sdf_sinks)
+    else:
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False,
+                                        cmap='hot', norm = LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+        plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
         return ax.images[0]
     elif ax.collections:
         return ax.collections[0]
-
-    return None
+    else:
+        return None
 
 
 def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
-
-    kwargs = dict(
-        xlim=(-400, 400),
-        ylim=(-400, 400),
-        cmap='gist_heat',
-        ax=ax,
-        cbar=cbar,
-        vmin=-4,
-        vmax=0
-    )
-
+    #cmap1 = truncate_cmap('gist_heat', 0.1, 1)
+    #cmap1.set_under('black')
     if SECTIONAL_VIEW:
-        kwargs['xsec'] = 0.00
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, xsec=0.00,
+                                        cmap='hot', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+        plot_sinks(ax, sdf_sinks=sdf_sinks)
 
-    sdf[sdf.itype == 8].render(
-        'log_sigma',
-        **kwargs
-    )
-
-    plot_sinks(ax, sdf_sinks)
+    else:
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, cmap='hot',
+                                        norm=LogNorm(3.6e-12, 1e-8), ax = ax , cbar = cbar)
+        plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
         return ax.images[0]
     elif ax.collections:
         return ax.collections[0]
+    else:
+        return None
 
-    return None
 
 
-# =========================================================
-# Example usage
-# =========================================================
 
-fig, ax = plt.subplots(figsize=(8, 8))
 
-im = subplot_gas(
-    sdf,
-    sdf_sinks,
-    SECTIONAL_VIEW=False,
-    ax=ax,
-    cbar=False
-)
 
-cbar = plt.colorbar(im, ax=ax)
-cbar.set_label(r'$\log_{10}(\Sigma \; [g/cm^2])$')
 
-ax.set_xlabel('x [AU]')
-ax.set_ylabel('y [AU]')
-ax.set_title('Gas Surface Density')
 
-plt.tight_layout()
-plt.show()
