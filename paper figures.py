@@ -8,7 +8,7 @@ from render import render
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
 PARTICLE_INDICES = [1] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
-COLORS = ['darkblue','tab:green', 'yellow']
+COLORS = ['cornflowerblue','tab:green', 'navajowhite']
 
 
 def processData(sdf, sdf_sinks):
