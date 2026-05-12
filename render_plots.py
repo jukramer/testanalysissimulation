@@ -9,10 +9,9 @@ from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_du
 n_rows = 6
 n_cols = 3
 
-
 encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
-for i in [10,11,12,14,17,20]:  # only 5 rows
+for i in [10,11,12,14,17,20]:  # only 5 rows    
     timestamp = 812 * i
     time = f'{timestamp:d} years'
     Time.append(time)
@@ -46,7 +45,6 @@ def render_plot(subplot, sectional_view):
             # else:
             #     sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+10}')
 
-
             if subplot == 'gas':
                 render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW = sectional_view , ax = ax, cbar = False)
                 ax.set_xlim(-300, 300)
@@ -68,7 +66,6 @@ def render_plot(subplot, sectional_view):
             ax.set_xlabel('')
             ax.set_ylabel('')
 
-
             if i == 0:
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
 
@@ -88,10 +85,9 @@ def render_plot(subplot, sectional_view):
     fig.suptitle(titles[subplot], fontsize=16, y=0.98)
     fig.subplots_adjust(top=0.90)
 
+SECTIONAL_VIEW = False
 
-SECTIONAL_VIEW = True
-
-render_list = ['gas', 'dust1', 'dust2']
+render_list = ['dust1']
 
 #plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:

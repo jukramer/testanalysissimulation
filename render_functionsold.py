@@ -2,7 +2,7 @@ import sarracen
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
-from matplotlib.colors import LogNorm, Normalize
+from matplotlib.colors import LogNorm
 
 plt.style.use('dark_background')
 
@@ -93,15 +93,14 @@ def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
 
 def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax,cbar):
     if SECTIONAL_VIEW:
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False, xsec=0.00,
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False, xsec=0.00,
                                         cmap='hot', norm = LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        sdf['rho'] = sdf['rho'].to_numpy()*scaling
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=True,
-                                        cmap='hot', ax = ax, cbar = cbar)
-        plot_sinks(ax, sdf_sinks=sdf_sinks) 
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False,
+                                        cmap='hot', norm = LogNorm(-2.2*scaling, 1.3*scaling), ax = ax, cbar = cbar)
+        plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
         return ax.images[0]
@@ -116,12 +115,12 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, xsec=0.00,
-                                        cmap='hot', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='hot', norm=LogNorm(-2.2*scaling, 1.3*scaling), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(-100, 100), ylim=(-100, 100), log_scale=False, cmap='hot',
-                                        norm=LogNorm(), ax = ax , cbar = cbar)
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, cmap='hot',
+                                        norm=LogNorm(-2.2*scaling, 1.3*scaling), ax = ax , cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
