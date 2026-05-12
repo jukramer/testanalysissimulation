@@ -6,6 +6,7 @@ from matplotlib.colors import LogNorm
 
 plt.style.use('dark_background')
 
+
 scaling = 1.988475 * 10**33 / (14959787070000)**3 # SM/AU^3 --> g/cm^3
 #print(scaling)
 

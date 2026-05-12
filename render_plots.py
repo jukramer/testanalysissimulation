@@ -14,14 +14,14 @@ encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
 for i in [10,11,12,14,17,20]:  # only 5 rows
     timestamp = 812 * i
-    time = f'{timestamp:d} years'
+    time = f'{timestamp:d}yrs'
     Time.append(time)
 
 
 def render_plot(subplot, sectional_view):
     mappable_for_cbar = None
 
-    fig = plt.figure(figsize=(8, 12))
+    fig = plt.figure(figsize=(8, 12), facecolor='white')
     gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.02, hspace=0.01)
 
     axes = np.empty((n_rows, n_cols), dtype=object)
@@ -70,7 +70,7 @@ def render_plot(subplot, sectional_view):
 
 
             if i == 0:
-                ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
+                ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10,  color='black')
 
             if j == 0:
                 ax.text(-0.05, 0.5, f'{Time[i]}, {snapshot}', transform=ax.transAxes,
@@ -81,11 +81,13 @@ def render_plot(subplot, sectional_view):
 
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
     cbar.set_label("log(rho)")
+    cbar.ax.yaxis.label.set_color('black')
+    cbar.ax.tick_params(colors='black')
 
     titles = {'gas': 'Gas Density Distribution',
               'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
               'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
-    fig.suptitle(titles[subplot], fontsize=16, y=0.98)
+    fig.suptitle(titles[subplot], fontsize=16, y=0.98, color = 'black')
     fig.subplots_adjust(top=0.90)
 
 
