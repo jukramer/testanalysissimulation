@@ -8,7 +8,7 @@ from render import render
 ## Setup constants
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
 PARTICLE_INDICES = [1] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
-COLORS = ['tab:blue','tab:orange', 'tab:green']
+COLORS = ['darkblue','tab:green', 'yellow']
 
 
 def processData(sdf, sdf_sinks):
@@ -83,69 +83,74 @@ def loadData(filepath):
 
 results = {}
 results2 = {}
+results3 = {}
 
-# #Check amount of files (timestamps)
+fig_gas, ax_gas = plt.subplots()
+fig_dust1, ax_dust1 = plt.subplots()
+fig_dust2, ax_dust2 = plt.subplots()
+
 for folder in FOLDERS:
-    results[folder] = {}
+    color = COLORS[FOLDERS.index(folder)]
 
+    # Gas
+    results[folder] = {}
     for file in os.listdir(folder):
         x, r = 0, 0
         if file.startswith(f"{folder}_"):
             print(f"Processing {file} from {folder}")
             x = round(int(file[-3:])*0.05, 3)
-
-            # sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
             sdfGas, sdfDust1, sdfDust2, sdf_sinks = loadData(f'{folder}/{file}')
-            particleTypes = [sdfGas, sdfDust1, sdfDust2, sdf_sinks]
-
-            # Get the chosen particles and concatenate to list
-            chosenParticles = []
-            for particleIndex in PARTICLE_INDICES:
-                chosenParticles.append(particleTypes[particleIndex])
-            sdf = pd.concat(chosenParticles)
-
-            # Calculate characteristic radius and add to list
+            sdf = sdfGas
             r = characteristic_radius(sdf.get('r').to_numpy(), sdf.get('mass').to_numpy())
             results[folder][x] = r
-
-
     print(results[folder])
     results[folder] = dict(sorted(results[folder].items()))
-    print(results[folder])
-    plt.plot(list(results[folder].keys()), list(results[folder].values()), label=folder, color = COLORS[FOLDERS.index(folder)])
+    ax_gas.plot(list(results[folder].keys()), list(results[folder].values()), label=folder, color=color)
 
-# # THIS IS FOR DASHED LINES
-
+    # Dust1
     results2[folder] = {}
     for file in os.listdir(folder):
         x, r = 0, 0
         if file.startswith(f"{folder}_"):
             print(f"Processing {file} from {folder}")
             x = round(int(file[-3:])*0.05, 3)
-
-            # sdf, sdf_sinks = sarracen.read_phantom(f'{folder}/{file}')
             sdfGas, sdfDust1, sdfDust2, sdf_sinks = loadData(f'{folder}/{file}')
-            particleTypes = [sdfGas, sdfDust1, sdfDust2, sdf_sinks]
-
-            # Get the chosen particles and concatenate to list
-            chosenParticles = []
-            for particleIndex in PARTICLE_INDICES:
-                chosenParticles.append(particleTypes[2])
-            sdf = pd.concat(chosenParticles)
-
-            # Calculate characteristic radius and add to list
+            sdf = sdfDust1
             r = characteristic_radius(sdf.get('r').to_numpy(), sdf.get('mass').to_numpy())
             results2[folder][x] = r
-
-
     print(results2[folder])
-    results[folder] = dict(sorted(results[folder].items()))
-    print(results2[folder])
-    plt.plot(list(results2[folder].keys()), list(results2[folder].values()), label=folder, linestyle='--',  color = COLORS[FOLDERS.index(folder)])
+    results2[folder] = dict(sorted(results2[folder].items()))
+    ax_dust1.plot(list(results2[folder].keys()), list(results2[folder].values()), label=folder, color=color)
 
+    # Dust2
+    results3[folder] = {}
+    for file in os.listdir(folder):
+        x, r = 0, 0
+        if file.startswith(f"{folder}_"):
+            print(f"Processing {file} from {folder}")
+            x = round(int(file[-3:])*0.05, 3)
+            sdfGas, sdfDust1, sdfDust2, sdf_sinks = loadData(f'{folder}/{file}')
+            sdf = sdfDust2
+            r = characteristic_radius(sdf.get('r').to_numpy(), sdf.get('mass').to_numpy())
+            results3[folder][x] = r
+    print(results3[folder])
+    results3[folder] = dict(sorted(results3[folder].items()))
+    ax_dust2.plot(list(results3[folder].keys()), list(results3[folder].values()), label=folder, color=color)
 
+ax_gas.set_xlabel("time [scaled units]")
+ax_gas.set_ylabel("r63,gas[au]")
+ax_gas.legend()
+fig_gas.savefig('renders/CRGas.png')
 
-plt.xlabel("time [scaled units]")
-plt.ylabel("r63[au]")
-plt.legend()
+ax_dust1.set_xlabel("time [scaled units]")
+ax_dust1.set_ylabel("r63,dust1[au]")
+ax_dust1.legend()
+fig_dust1.savefig('renders/CRDust1.png')
+
+ax_dust2.set_xlabel("time [scaled units]")
+ax_dust2.set_ylabel("r63,Dust2[au]")
+ax_dust2.legend()
+fig_dust2.savefig('renders/CRDust2.png')
+
 plt.show()
+    
