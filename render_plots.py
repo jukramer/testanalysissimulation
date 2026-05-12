@@ -89,7 +89,7 @@ def render_plot(subplot, sectional_view):
     fig.subplots_adjust(top=0.90)
 
 
-SECTIONAL_VIEW = True
+SECTIONAL_VIEW = False
 
 render_list = ['gas', 'dust1', 'dust2']
 
