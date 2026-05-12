@@ -3,8 +3,7 @@ import numpy as np
 from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_dust2
 
-# TODO adjust scale (keep SM/AU^3 but make sure they correspond to same equivalent scale)
-# TODO get rid of spacing
+# TODO adjust scale (keep SM/AU^3 but make sure they correspond to same equivalent scale) --> not working, something wrong with scaling or conversion?
 # TODO indicate scale in renders (800UA, 300AU)
 
 n_rows = 5
@@ -22,8 +21,8 @@ for i in range(10, 15):  # only 5 rows
 def render_plot(subplot, sectional_view):
     mappable_for_cbar = None
 
-    fig = plt.figure(figsize=(8, 10))
-    gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.05, hspace=0.05)
+    fig = plt.figure(figsize=(8, 12))
+    gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.02, hspace=0.01)
 
     axes = np.empty((n_rows, n_cols), dtype=object)
     for i in range(n_rows):
@@ -74,7 +73,7 @@ def render_plot(subplot, sectional_view):
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
 
             if j == 0:
-                ax.text(-0.12, 0.5, f'{Time[i]}, {Snapshot[i]}', transform=ax.transAxes,
+                ax.text(-0.05, 0.5, f'{Time[i]}', transform=ax.transAxes,
                         rotation=90, va='center', ha='center', fontsize=10)
 
             if mappable_for_cbar is None:
