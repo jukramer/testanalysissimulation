@@ -6,13 +6,13 @@ from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_du
 # TODO adjust scale (keep SM/AU^3 but make sure they correspond to same equivalent scale) --> not working, something wrong with scaling or conversion?
 # TODO indicate scale in renders (800UA, 300AU)
 
-n_rows = 5
+n_rows = 6
 n_cols = 3
 
 
 encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
-for i in range(10, 15):  # only 5 rows
+for i in [10,11,12,14,17,20]:  # only 5 rows
     timestamp = 812 * i
     time = f'{timestamp:d} years'
     Time.append(time)
@@ -31,7 +31,7 @@ def render_plot(subplot, sectional_view):
 
     cax = fig.add_subplot(gs[:, 3])
 
-    selected_snapshots = [10,11,12,14,17]
+    selected_snapshots = [10,11,12,14,17,20]
     Snapshot = []
     for i in range(n_rows):
         snapshot = selected_snapshots[i]
@@ -73,7 +73,7 @@ def render_plot(subplot, sectional_view):
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
 
             if j == 0:
-                ax.text(-0.05, 0.5, f'{Time[i]}', transform=ax.transAxes,
+                ax.text(-0.05, 0.5, f'{Time[i]}, {snapshot}', transform=ax.transAxes,
                         rotation=90, va='center', ha='center', fontsize=10)
 
             if mappable_for_cbar is None:
@@ -89,7 +89,7 @@ def render_plot(subplot, sectional_view):
     fig.subplots_adjust(top=0.90)
 
 
-SECTIONAL_VIEW = False
+SECTIONAL_VIEW = True
 
 render_list = ['gas', 'dust1', 'dust2']
 
