@@ -13,15 +13,22 @@ encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
 for i in [10,11,12,14,17,20]:  # only 5 rows    
     timestamp = 812 * i
-    time = f'{timestamp:d} years'
+    time = f'{timestamp:d}yrs'
     Time.append(time)
 
 
 def render_plot(subplot, sectional_view):
     mappable_for_cbar = None
 
-    fig = plt.figure(figsize=(8, 12))
-    gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.02, hspace=0.01)
+    fig = plt.figure(figsize=(6.5, 12), facecolor='white')
+    if subplot == 'gas':
+        scale = 600
+    if subplot == 'dust1':
+        scale = 300
+    if subplot == 'dust2':
+        scale =200
+    fig.text(0.05, 0.95,  f'scale: {scale}x{scale} AU', ha='left',va='top',color='black',fontsize=9)
+    gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.01, hspace=0.01)
 
     axes = np.empty((n_rows, n_cols), dtype=object)
     for i in range(n_rows):
@@ -50,6 +57,7 @@ def render_plot(subplot, sectional_view):
                 ax.set_xlim(-300, 300)
                 ax.set_ylim(-300, 300)
                 ax.set_aspect('equal', adjustable='box')
+
             if subplot == 'dust1':
                 render = subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
                 ax.set_xlim(-150, 150)
@@ -67,7 +75,7 @@ def render_plot(subplot, sectional_view):
             ax.set_ylabel('')
 
             if i == 0:
-                ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10)
+                ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10,  color='black')
 
             if j == 0:
                 ax.text(-0.05, 0.5, f'{Time[i]}, {snapshot}', transform=ax.transAxes,
@@ -77,12 +85,16 @@ def render_plot(subplot, sectional_view):
                 mappable_for_cbar = render
 
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
+    cbar.outline.set_edgecolor('black')
+    cbar.outline.set_linewidth(1.5)
     cbar.set_label("log(rho)")
+    cbar.ax.yaxis.label.set_color('black')
+    cbar.ax.tick_params(colors='black')
 
     titles = {'gas': 'Gas Density Distribution',
               'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
               'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
-    fig.suptitle(titles[subplot], fontsize=16, y=0.98)
+    fig.suptitle(titles[subplot], fontsize=16, y=0.98, color = 'black')
     fig.subplots_adjust(top=0.90)
 
 SECTIONAL_VIEW = False
