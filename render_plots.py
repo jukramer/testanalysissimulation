@@ -21,7 +21,7 @@ for i in [10,11,12,14,17,20]:  # only 5 rows
 def render_plot(subplot, sectional_view):
     mappable_for_cbar = None
 
-    fig = plt.figure(figsize=(8, 12), facecolor='white')
+    fig = plt.figure(figsize=(6.5, 12), facecolor='white')
     if subplot == 'gas':
         scale = 600
     if subplot == 'dust1':
@@ -29,7 +29,7 @@ def render_plot(subplot, sectional_view):
     if subplot == 'dust2':
         scale =200
     fig.text(0.05, 0.95,  f'scale: {scale}x{scale} AU', ha='left',va='top',color='black',fontsize=9)
-    gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.02, hspace=0.01)
+    gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.01, hspace=0.01)
 
     axes = np.empty((n_rows, n_cols), dtype=object)
     for i in range(n_rows):
@@ -88,6 +88,8 @@ def render_plot(subplot, sectional_view):
                 mappable_for_cbar = render
 
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
+    cbar.outline.set_edgecolor('black')
+    cbar.outline.set_linewidth(1.5)
     cbar.set_label("log(rho)")
     cbar.ax.yaxis.label.set_color('black')
     cbar.ax.tick_params(colors='black')
