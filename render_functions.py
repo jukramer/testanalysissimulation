@@ -122,8 +122,8 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(-100, 100), ylim=(-100, 100), log_scale=False, cmap='hot',
-                                        norm=LogNorm(), ax = ax , cbar = cbar)
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=True,
+                                        cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
