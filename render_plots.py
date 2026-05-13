@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import LogFormatterExponent
 from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_dust2
 
@@ -45,7 +46,7 @@ def render_plot(subplot, sectional_view):
         for j in range(n_cols):
             ax = axes[i, j]
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{selected_snapshots[i]}')
-
+            
             # if (i+10)< 10:
             #     sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i+6}')
             #
@@ -90,6 +91,7 @@ def render_plot(subplot, sectional_view):
     cbar.set_label("log(rho)")
     cbar.ax.yaxis.label.set_color('black')
     cbar.ax.tick_params(colors='black')
+    cbar.ax.yaxis.set_major_formatter(LogFormatterExponent())
 
     titles = {'gas': 'Gas Density Distribution',
               'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
