@@ -9,7 +9,7 @@ from render import render
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
 PARTICLE_INDICES = [1] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
 COLORS = ['cornflowerblue','tab:green', 'navajowhite']
-fs = 12
+
 def processData(sdf, sdf_sinks):
     sdf.calc_density()
 
@@ -90,7 +90,7 @@ fig_dust2, ax_dust2 = plt.subplots()
 
 for folder in FOLDERS:
     color = COLORS[FOLDERS.index(folder)]
-
+    fs = 15
     # Gas
     results[folder] = {}
     for file in os.listdir(folder):
