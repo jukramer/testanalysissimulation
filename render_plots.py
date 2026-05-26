@@ -13,8 +13,8 @@ n_cols = 3
 encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
 for i in [10,11,12,14,17,20]:  # only 5 rows    
-    timestamp = 812 * i
-    time = f'{timestamp:d}yrs'
+    timestamp = i/20
+    time = f'{timestamp}t'
     Time.append(time)
 
 
@@ -94,17 +94,24 @@ def render_plot(subplot, sectional_view):
     cbar.ax.yaxis.set_major_formatter(LogFormatterExponent())
 
     titles = {'gas': 'Gas Density Distribution',
-              'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
-              'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
+              'dust1': 'Dust Density Distribution (St = 10)',
+              'dust2': 'Dust Density Distribution (St = 1)'}
     fig.suptitle(titles[subplot], fontsize=16, y=0.98, color = 'black')
     fig.subplots_adjust(top=0.90)
 
-SECTIONAL_VIEW = False
+SECTIONAL_VIEW = True
 
 render_list = ['gas','dust1','dust2']
 
 #plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW)
+    plt.savefig(
+        f'{plot}_distr_draft.png',
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+
     plt.show()
 
