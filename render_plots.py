@@ -79,8 +79,8 @@ def render_plot(subplot, sectional_view):
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10,  color='black')
 
             if j == 0:
-                ax.text(-0.05, 0.5, f'{Time[i]}, {snapshot}', transform=ax.transAxes,
-                        rotation=90, va='center', ha='center', fontsize=10)
+                ax.text(-0.05, 0.5, f'{Time[i]}', transform=ax.transAxes,
+                        rotation=90, va='center', ha='center', fontsize=12, color='black')
 
             if mappable_for_cbar is None:
                 mappable_for_cbar = render
@@ -88,7 +88,7 @@ def render_plot(subplot, sectional_view):
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
     cbar.outline.set_edgecolor('black')
     cbar.outline.set_linewidth(1.5)
-    cbar.set_label("Log column density [$SM/AU^2$]")
+    cbar.set_label("Log column density [$SM/AU^2$]", fontsize=12)
     cbar.ax.yaxis.label.set_color('black')
     cbar.ax.tick_params(colors='black')
     cbar.ax.yaxis.set_major_formatter(LogFormatterExponent())
@@ -99,7 +99,7 @@ def render_plot(subplot, sectional_view):
     fig.suptitle(titles[subplot], fontsize=16, y=0.98, color = 'black')
     fig.subplots_adjust(top=0.90)
 
-SECTIONAL_VIEW = True
+SECTIONAL_VIEW = False
 
 render_list = ['gas','dust1','dust2']
 
