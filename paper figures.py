@@ -9,7 +9,7 @@ from render import render
 FOLDERS = ['prograde', 'incl_30', 'retrograde']
 PARTICLE_INDICES = [1] # 0 = gas, 1 = dust1, 2 = dust2, 3 = sinks
 COLORS = ['cornflowerblue','tab:green', 'navajowhite']
-
+fs = 12
 def processData(sdf, sdf_sinks):
     sdf.calc_density()
 
@@ -136,19 +136,19 @@ for folder in FOLDERS:
     results3[folder] = dict(sorted(results3[folder].items()))
     ax_dust2.plot(list(results3[folder].keys()), list(results3[folder].values()),linewidth = 2.5 , label=folder, color=color)
 
-ax_gas.set_xlabel("time [scaled units]")
-ax_gas.set_ylabel("r63 [au]")
-ax_gas.legend()
+ax_gas.set_xlabel("time [scaled units]", fontsize = fs)
+ax_gas.set_ylabel("r63 [au]", fontsize = fs)
+ax_gas.legend(fontsize = fs)
 fig_gas.savefig('renders/CRGas.png')
 
-ax_dust1.set_xlabel("time [scaled units]")
-ax_dust1.set_ylabel("r63 [au]")
-ax_dust1.legend()
+ax_dust1.set_xlabel("time [scaled units]", fontsize = fs)
+ax_dust1.set_ylabel("r63 [au]", fontsize = fs)
+ax_dust1.legend(fontsize = fs)
 fig_dust1.savefig('renders/CRDust1.png')
 
-ax_dust2.set_xlabel("time [scaled units]")
-ax_dust2.set_ylabel("r63 [au]")
-ax_dust2.legend()
+ax_dust2.set_xlabel("time [scaled units]", fontsize = fs)
+ax_dust2.set_ylabel("r63 [au]", fontsize = fs)
+ax_dust2.legend(fontsize = fs)
 fig_dust2.savefig('renders/CRDust2.png')
 
 plt.show()
