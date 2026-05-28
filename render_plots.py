@@ -13,8 +13,8 @@ n_cols = 3
 encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
 for i in [10,11,12,14,17,20]:  # only 5 rows    
-    timestamp = 812 * i
-    time = f'{timestamp:d}yrs'
+    timestamp = i/20
+    time = f'{timestamp}t'
     Time.append(time)
 
 
@@ -27,7 +27,7 @@ def render_plot(subplot, sectional_view):
     if subplot == 'dust1':
         scale = 300
     if subplot == 'dust2':
-        scale =200
+        scale =300
     fig.text(0.05, 0.95,  f'scale: {scale}x{scale} AU', ha='left',va='top',color='black',fontsize=9)
     gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.01, hspace=0.01)
 
@@ -66,8 +66,8 @@ def render_plot(subplot, sectional_view):
                 ax.set_aspect('equal', adjustable='box')
             if subplot == 'dust2':
                 render = subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
-                ax.set_xlim(-100, 100)
-                ax.set_ylim(-100, 100)
+                ax.set_xlim(-150, 150)
+                ax.set_ylim(-150, 150)
                 ax.set_aspect('equal', adjustable='box')
 
             ax.set_xticks([])
@@ -79,8 +79,8 @@ def render_plot(subplot, sectional_view):
                 ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10,  color='black')
 
             if j == 0:
-                ax.text(-0.05, 0.5, f'{Time[i]}, {snapshot}', transform=ax.transAxes,
-                        rotation=90, va='center', ha='center', fontsize=10)
+                ax.text(-0.05, 0.5, f'{Time[i]}', transform=ax.transAxes,
+                        rotation=90, va='center', ha='center', fontsize=12, color='black')
 
             if mappable_for_cbar is None:
                 mappable_for_cbar = render
@@ -88,23 +88,31 @@ def render_plot(subplot, sectional_view):
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
     cbar.outline.set_edgecolor('black')
     cbar.outline.set_linewidth(1.5)
-    cbar.set_label("Log column density [$SM/AU^2$]")
+    cbar.set_label("Log column density [$M_{\odot}/AU^2$]", fontsize=12)
     cbar.ax.yaxis.label.set_color('black')
     cbar.ax.tick_params(colors='black')
     cbar.ax.yaxis.set_major_formatter(LogFormatterExponent())
 
     titles = {'gas': 'Gas Density Distribution',
-              'dust1': 'Dust Type 1 Density Distribution (Stokes Number = 10)',
-              'dust2': 'Dust Type 2 Density Distribution (Stokes Number = 1)'}
+              'dust1': 'Dust Density Distribution (St = 10)',
+              'dust2': 'Dust Density Distribution (St = 1)'}
     fig.suptitle(titles[subplot], fontsize=16, y=0.98, color = 'black')
     fig.subplots_adjust(top=0.90)
 
 SECTIONAL_VIEW = False
 
 render_list = ['gas','dust1','dust2']
+#render_list = ['dust1','dust2']
 
 #plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW)
+    plt.savefig(
+        f'{plot}_distr_draft.png',
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white'
+    )
+
     plt.show()
 
