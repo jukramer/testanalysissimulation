@@ -4,8 +4,6 @@ from matplotlib.ticker import LogFormatterExponent
 from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_dust2
 
-# TODO adjust scale (keep SM/AU^3 but make sure they correspond to same equivalent scale) --> not working, something wrong with scaling or conversion?
-# TODO indicate scale in renders (800UA, 300AU)
 
 n_rows = 6
 n_cols = 3
@@ -28,7 +26,6 @@ def render_plot(subplot, sectional_view):
         scale = 300
     if subplot == 'dust2':
         scale =300
-    fig.text(0.05, 0.95,  f'scale: {scale}x{scale} AU', ha='left',va='top',color='black',fontsize=9)
     gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.01, hspace=0.01)
 
     axes = np.empty((n_rows, n_cols), dtype=object)
@@ -42,11 +39,15 @@ def render_plot(subplot, sectional_view):
     Snapshot = []
     for i in range(n_rows):
         snapshot = selected_snapshots[i]
+
+
+
         Snapshot.append(snapshot)
         for j in range(n_cols):
             ax = axes[i, j]
             sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{selected_snapshots[i]}')
-            
+
+
             # if (i+10)< 10:
             #     sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i+6}')
             #
@@ -59,17 +60,29 @@ def render_plot(subplot, sectional_view):
                 ax.set_ylim(-300, 300)
                 ax.set_aspect('equal', adjustable='box')
 
+
             if subplot == 'dust1':
                 render = subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
                 ax.set_xlim(-150, 150)
                 ax.set_ylim(-150, 150)
                 ax.set_aspect('equal', adjustable='box')
+
+
             if subplot == 'dust2':
                 render = subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW=sectional_view, ax=ax, cbar=False)
                 ax.set_xlim(-150, 150)
                 ax.set_ylim(-150, 150)
                 ax.set_aspect('equal', adjustable='box')
 
+
+            xmin, xmax = ax.get_xlim()
+            ymin, ymax = ax.get_ylim()
+
+            x_text = xmax - 0.3 * (xmax - xmin)
+            y_text = ymin + 0.1 * (ymax - ymin)
+
+            if i == 0 and j == 0:
+                ax.text(x_text,y_text,f'{scale} AU',color='white',fontsize=8)
             ax.set_xticks([])
             ax.set_yticks([])
             ax.set_xlabel('')
@@ -88,7 +101,7 @@ def render_plot(subplot, sectional_view):
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
     cbar.outline.set_edgecolor('black')
     cbar.outline.set_linewidth(1.5)
-    cbar.set_label("Log column density [$M_{\odot}/AU^2$]", fontsize=12)
+    cbar.set_label("Log column density [$M☉/AU^2$]", fontsize=12)
     cbar.ax.yaxis.label.set_color('black')
     cbar.ax.tick_params(colors='black')
     cbar.ax.yaxis.set_major_formatter(LogFormatterExponent())
@@ -99,7 +112,7 @@ def render_plot(subplot, sectional_view):
     fig.suptitle(titles[subplot], fontsize=16, y=0.98, color = 'black')
     fig.subplots_adjust(top=0.90)
 
-SECTIONAL_VIEW = False
+SECTIONAL_VIEW = True
 
 render_list = ['gas','dust1','dust2']
 #render_list = ['dust1','dust2']
