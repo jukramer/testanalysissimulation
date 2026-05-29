@@ -2,13 +2,11 @@ import sarracen
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
-from matplotlib.colors import LogNorm, Normalize
-from matplotlib.ticker import LogFormatterExponent
+from matplotlib.colors import LogNorm
 
 plt.style.use('dark_background')
 
-
-# scaling = 1.988475e33 / (14959787070000)**3 # SM/AU^2 --> g/cm^2
+scaling = 1.988475 * 10**33 / (14959787070000)**3 # SM/AU^3 --> g/cm^3
 #print(scaling)
 
 def sdf_creator(filename):
@@ -36,8 +34,6 @@ def sdf_creator(filename):
     sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
 
-    #sdf['rho-gcm'] = sdf['rho']*scaling
-
     return sdf, sdf_sinks
 
 
@@ -52,7 +48,7 @@ def plot_sinks(ax, sdf_sinks):
     y_sink_1 = sdf_sinks.at[1, 'y']
 
     ax.scatter(x=x_sink_0, y=y_sink_0, color='skyblue', s=10)
-    ax.scatter(x=x_sink_1, y=y_sink_1, color='white', s=10)
+    ax.scatter(x=x_sink_1, y=y_sink_1, color='red', s=10)
 
 
 # function to truncated colour maps
@@ -78,12 +74,12 @@ cmap_dust = truncate_cmap('Blues_r')
 
 def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     if SECTIONAL_VIEW:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=False, xsec=0.00, norm=LogNorm(3.6e-12, 1e-8),
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True, xsec=0.00,
                                             cmap='hot', ax=ax, cbar=cbar)
 
 
     else:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=False, norm=LogNorm(3.6e-11, 1e-5),
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True,
                                             cmap='hot', ax=ax,cbar=cbar)
     plot_sinks(ax, sdf_sinks=sdf_sinks)
 
@@ -95,17 +91,17 @@ def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     return None
 
 
-def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
+def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax,cbar):
     if SECTIONAL_VIEW:
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False, xsec=0.00,
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False, xsec=0.00,
                                         cmap='hot', norm = LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False, norm=LogNorm(1e-11, 1e-8),
-                                        cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
-        plot_sinks(ax, sdf_sinks=sdf_sinks) 
-        
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(- 150, 150), ylim=(-150, 150), log_scale=False,
+                                        cmap='hot', norm = LogNorm(-2.2*scaling, 1.3*scaling), ax = ax, cbar = cbar)
+        plot_sinks(ax, sdf_sinks=sdf_sinks)
+
     if ax.images:
         return ax.images[0]
     elif ax.collections:
@@ -119,12 +115,12 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     #cmap1.set_under('black')
     if SECTIONAL_VIEW:
         ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, xsec=0.00,
-                                        cmap='hot', norm=LogNorm(3.6e-12, 1e-8), ax = ax, cbar = cbar)
+                                        cmap='hot', norm=LogNorm(-2.2*scaling, 1.3*scaling), ax = ax, cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False,norm=LogNorm(1e-11, 1e-8),
-                                        cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(- 100, 100), ylim=(-100, 100), log_scale=False, cmap='hot',
+                                        norm=LogNorm(-2.2*scaling, 1.3*scaling), ax = ax , cbar = cbar)
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:

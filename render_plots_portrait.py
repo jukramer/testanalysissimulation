@@ -5,12 +5,12 @@ from matplotlib.gridspec import GridSpec
 from render_functions import sdf_creator, subplot_gas, subplot_dust1, subplot_dust2
 
 
-n_rows = 6
-n_cols = 3
+n_rows = 3
+n_cols = 6
 
 encounter = ['prograde', 'retrograde', 'incl_30']
 Time = []
-for i in [10,11,12,14,17,20]:  # only 5 rows    
+for i in [10,11,12,14,17,20]:  # only 5 rows
     timestamp = i/20
     time = f'{timestamp}t'
     Time.append(time)
@@ -19,41 +19,42 @@ for i in [10,11,12,14,17,20]:  # only 5 rows
 def render_plot(subplot, sectional_view):
     mappable_for_cbar = None
 
-    fig = plt.figure(figsize=(7, 12), facecolor='white')
+    fig = plt.figure(figsize=(14, 7), facecolor='white')
     if subplot == 'gas':
         scale = 600
     if subplot == 'dust1':
         scale = 300
     if subplot == 'dust2':
         scale =300
-    gs = GridSpec(n_rows, 4, figure=fig, width_ratios=[1, 1, 1, 0.08], wspace=0.01, hspace=0.01)
+    gs = GridSpec(
+        n_rows,
+        n_cols + 1,
+        figure=fig,
+        width_ratios=[1] * n_cols + [0.08],
+        wspace=0.01,
+        hspace=0.01
+    )
 
     axes = np.empty((n_rows, n_cols), dtype=object)
+
     for i in range(n_rows):
         for j in range(n_cols):
             axes[i, j] = fig.add_subplot(gs[i, j])
 
-    cax = fig.add_subplot(gs[:, 3])
+    cax = fig.add_subplot(gs[:, -1])
 
-    selected_snapshots = [10,11,12,14,17,20]
-    Snapshot = []
-    for i in range(n_rows):
-        snapshot = selected_snapshots[i]
+    selected_snapshots = [10, 11, 12, 14, 17, 20]
 
+    for i in range(n_rows):  # encounters
+        for j in range(n_cols):  # timestamps
 
+            snapshot = selected_snapshots[j]
 
-        Snapshot.append(snapshot)
-        for j in range(n_cols):
             ax = axes[i, j]
-            sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{selected_snapshots[i]}')
 
-
-            # if (i+10)< 10:
-            #     sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_0000{i+6}')
-            #
-            # else:
-            #     sdf, sdf_sinks = sdf_creator(f'{encounter[j]}/{encounter[j]}_000{i+10}')
-
+            sdf, sdf_sinks = sdf_creator(
+                f'{encounter[i]}/{encounter[i]}_000{snapshot}'
+            )
             if subplot == 'gas':
                 render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW = sectional_view , ax = ax, cbar = False)
                 ax.set_xlim(-300, 300)
@@ -88,12 +89,28 @@ def render_plot(subplot, sectional_view):
             ax.set_xlabel('')
             ax.set_ylabel('')
 
+            # column titles = timestamps
             if i == 0:
-                ax.set_title(['Prograde', 'Retrograde', 'Inclined 30°'][j], fontsize=12, pad=10,  color='black')
+                ax.set_title(
+                    f'{Time[j]}',
+                    fontsize=12,
+                    pad=10,
+                    color='black'
+                )
 
+            # row labels = encounters
             if j == 0:
-                ax.text(-0.05, 0.5, f'{Time[i]}', transform=ax.transAxes,
-                        rotation=90, va='center', ha='center', fontsize=12, color='black')
+                ax.text(
+                    -0.08,
+                    0.5,
+                    ['Prograde', 'Retrograde', 'Inclined 30°'][i],
+                    transform=ax.transAxes,
+                    rotation=90,
+                    va='center',
+                    ha='center',
+                    fontsize=12,
+                    color='black'
+                )
 
             if mappable_for_cbar is None:
                 mappable_for_cbar = render

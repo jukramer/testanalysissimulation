@@ -83,7 +83,7 @@ def tilt_iter(folder = 'incl_30', n = 30, rIn=10, rOut=150, particle_type=None):
 
 radius, tilt = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 150, particle_type = None)
 
-time = [10,11,12,13,14,15,16,17,18,19,20]
+time = [t*0.05 for t in [10,11,12,13,14,15,16,17,18,19,20]]
 
 
 #sdf, sdf_sinks = render('incl_30/incl_30_00010')
@@ -136,18 +136,18 @@ ax.scatter(R_points, T_points, Z_points,
            c='red', s=5, alpha=0.3, label='Original data')
 
 # Labels
-ax.set_xlabel('Radius (AU)', fontsize=12)
-ax.set_ylabel('Snapshot', fontsize=12)
-ax.set_zlabel('Inclination (degrees)', fontsize=12)
+ax.set_xlabel('Radius (AU)', fontsize=16)
+ax.set_ylabel('Time', fontsize=16)
+ax.set_zlabel('Inclination (degrees)', fontsize=16)
 ax.set_title('Tilt Profile Over Time', 
-             fontsize=14)
+             fontsize=19)
 
 # Color bar
 cbar = fig.colorbar(surf, ax=ax, shrink=0.5, aspect=10)
-cbar.set_label('Inclination', fontsize=10)
+cbar.set_label('Inclination', fontsize=14)
 
 # Add legend
-ax.legend()
+ax.legend(fontsize = 16)
 
 plt.tight_layout()
 plt.show()
@@ -165,15 +165,15 @@ rdust2, tdust2 = tilt_iter(folder = 'incl_30', n = 40, rIn = 10, rOut = 100, par
 for i, time in enumerate(time):
     plt.figure(figsize=(10, 6))
 
-    plt.plot(rgas[i], tgas[i], color= 'blue', label=f'Gas ')
-    plt.plot(rdust1[i], tdust1[i], color='green', label=f'Dust Type 1 (Stokes Number = 10) ')
-    plt.plot(rdust2[i], tdust2[i], color = 'red', label=f'Dust Type 2 (Stokes Number = 1) ')
+    plt.plot(rgas[i], tgas[i], linewidth= 2.5, color= 'blue', label=f'Gas ')
+    plt.plot(rdust1[i], tdust1[i], color='green', linewidth= 2.5, label=f'Dust with Stokes Number = 10 ')
+    plt.plot(rdust2[i], tdust2[i], color = 'red', linewidth= 2.5, label=f'Dust with Stokes Number = 1 ')
 
-    plt.xlabel('Radius (AU)', fontsize=12)
-    plt.ylabel('Inclination (degrees)', fontsize=12)
-    plt.title(f'Tilt Profile Snapshot {time}', fontsize=14)
+    plt.xlabel('Radius (AU)', fontsize=16)
+    plt.ylabel('Inclination (degrees)', fontsize=16)
+    plt.title(f'Tilt Profile at t = {round(time,3)}', fontsize=19)
     plt.ylim(24, 38)
-    plt.legend()
+    plt.legend(fontsize=16)
     plt.tight_layout()
     plt.show()
 
