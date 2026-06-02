@@ -102,7 +102,7 @@ def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False, norm=LogNorm(1e-11, 1e-8),
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False, norm=LogNorm(1e-11, 1.e-7),
                                         cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
         plot_sinks(ax, sdf_sinks=sdf_sinks) 
         
@@ -123,7 +123,7 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False,norm=LogNorm(1e-11, 1e-8),
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False,norm=LogNorm(1e-11, 1e-7),
                                         cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 

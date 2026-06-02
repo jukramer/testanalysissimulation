@@ -131,8 +131,9 @@ def render_plot(subplot, sectional_view):
 
 SECTIONAL_VIEW = False
 
-render_list = ['gas','dust1','dust2']
-#render_list = ['dust1','dust2']
+#render_list = ['gas','dust1','dust2']
+# render_list = ['dust1','dust2']
+render_list = ['dust1']
 
 #plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
