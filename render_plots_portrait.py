@@ -32,7 +32,7 @@ def render_plot(subplot, sectional_view):
         figure=fig,
         width_ratios=[1] * n_cols + [0.08],
         wspace=0.01,
-        hspace=0.01
+        hspace=-0.08
     )
 
     axes = np.empty((n_rows, n_cols), dtype=object)
@@ -79,7 +79,7 @@ def render_plot(subplot, sectional_view):
             xmin, xmax = ax.get_xlim()
             ymin, ymax = ax.get_ylim()
 
-            x_text = xmax - 0.3 * (xmax - xmin)
+            x_text = xmax - 0.9 * (xmax - xmin)
             y_text = ymin + 0.1 * (ymax - ymin)
 
             if i == 0 and j == 0:
@@ -118,7 +118,7 @@ def render_plot(subplot, sectional_view):
     cbar = fig.colorbar(mappable_for_cbar, cax=cax)
     cbar.outline.set_edgecolor('black')
     cbar.outline.set_linewidth(1.5)
-    cbar.set_label("Log column density [$M☉/AU^2$]", fontsize=12)
+    cbar.set_label("Log Column Density [$M☉/AU^2$]", fontsize=12)
     cbar.ax.yaxis.label.set_color('black')
     cbar.ax.tick_params(colors='black')
     cbar.ax.yaxis.set_major_formatter(LogFormatterExponent())
@@ -129,7 +129,7 @@ def render_plot(subplot, sectional_view):
     fig.suptitle(titles[subplot], fontsize=16, y=0.98, color = 'black')
     fig.subplots_adjust(top=0.90)
 
-SECTIONAL_VIEW = True
+SECTIONAL_VIEW = False
 
 render_list = ['gas','dust1','dust2']
 #render_list = ['dust1','dust2']
