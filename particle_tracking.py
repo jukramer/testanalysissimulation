@@ -162,9 +162,9 @@ def trackPart(orbitType, struct, rVals, nSnapTrack, nAzimuthBins=50, avg=True):
             
     if avg:
         # averages amongst all particles    
-        return np.vstack([np.mean(dust1Array, 1, keepdims=True), np.mean(dust2Array, 1, keepdims=True)])
+        return np.vstack([np.mean(dust1Array, 1, keepdims=True), np.mean(dust2Array, 1, keepdims=True)]), idx1, idx2
     else:
-        return np.vstack([dust1Array, dust2Array])
+        return np.vstack([dust1Array, dust2Array]), idx1, idx2
 
 
 def main():
@@ -174,10 +174,8 @@ def main():
     # print(a.max(), a.min())
     # print(a[a>0])
     
-    
-    
     # Tracking
-    trackArrPro = trackPart('prograde', 'dust', (50, np.inf), nSnapTrack)[1].T
+    trackArrPro = trackPart('prograde', 'dust', (50, np.inf), nSnapTrack)[0][1].T
     # trackArrRetro = trackPart('retrograde', 'dust', (0, 0), nSnapTrack)
     # trackArrIncl = trackPart('incl_30', 'dust', (0, 0), nSnapTrack)
     # Plotting
