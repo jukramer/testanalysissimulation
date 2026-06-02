@@ -8,8 +8,8 @@ from matplotlib.ticker import LogFormatterExponent
 plt.style.use('dark_background')
 
 
-scaling = 1.988475e33 / (14959787070000)**3 # SM/AU^3 --> g/cm^3
-#print(scaling)
+SCALING = 1.988475e33 / (14959787070000)**3 # SM/AU^3 --> g/cm^3
+#print(SCALING)
 
 def sdf_creator(filename):
     sdf, sdf_sinks = sarracen.read_phantom(filename)
@@ -76,13 +76,13 @@ cmap_dust = truncate_cmap('Blues_r')
 
 def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     if SECTIONAL_VIEW:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True, xsec=0.00,
+        render = sdf[sdf.itype == 1].render('rho', xlim=(-300, 300), ylim=(-300, 300), log_scale=True, xsec=0.00,
                                             cmap='hot', ax=ax, cbar=cbar)
 
 
     else:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=True,
-                                            cmap='hot', ax=ax,cbar=cbar)
+        render = sdf[sdf.itype == 1].render('rho', xlim=(-300, 300), ylim=(-300, 300), log_scale=True,
+                                            cmap='hot', ax=ax, cbar=cbar)
     plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
@@ -100,7 +100,7 @@ def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        sdf['rho_cg'] = sdf['rho'].to_numpy()*scaling
+        sdf['rho_cg'] = sdf['rho'].to_numpy()*SCALING
         ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=True,
                                         cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
         plot_sinks(ax, sdf_sinks=sdf_sinks) 

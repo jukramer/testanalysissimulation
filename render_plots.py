@@ -80,7 +80,7 @@ def render_plot(subplot, sectional_view):
 
             if j == 0:
                 ax.text(-0.05, 0.5, f'{Time[i]}, {snapshot}', transform=ax.transAxes,
-                        rotation=90, va='center', ha='center', fontsize=10)
+                        rotation=90, va='center', ha='center', fontsize=10, color='black')
 
             if mappable_for_cbar is None:
                 mappable_for_cbar = render
@@ -106,5 +106,6 @@ render_list = ['gas','dust1','dust2']
 #plot_name_list = ['gas_distribution','dust_a_distribution','dust_b_distribution']
 for plot in render_list:
     render_plot(plot, SECTIONAL_VIEW)
+    plt.savefig(f'{plot}render.png', facecolor='white')
     plt.show()
-
+    

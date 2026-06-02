@@ -11,7 +11,6 @@ GRAV_PARAM = 1.2371e20 # Solar
 
 n = 0
 
-
 def loadData(filepath):
     sdfGas, sdfDust1, sdfDust2, sdf_sinks = sarracen.read_phantom(filepath, separate_types='all')
     # print(sdfDust1.keys())
@@ -64,7 +63,6 @@ def processData(sdf, sdf_sinks):
     sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
     
-    # Velocity TODO: No velocity data on all snapshots yet
     try:
         sdf['vx'] = sdf['vx'] - sdfSinks0.at[0, 'vx']
         sdf['vy'] = sdf['vy'] - sdfSinks0.at[0, 'vy']
