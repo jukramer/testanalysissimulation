@@ -8,8 +8,8 @@ from matplotlib.ticker import LogFormatterExponent
 plt.style.use('dark_background')
 
 
-SCALING = 1.988475e33 / (14959787070000)**3 # SM/AU^3 --> g/cm^3
-#print(SCALING)
+# scaling = 1.988475e33 / (14959787070000)**3 # SM/AU^2 --> g/cm^2
+#print(scaling)
 
 def sdf_creator(filename):
     sdf, sdf_sinks = sarracen.read_phantom(filename)
@@ -36,6 +36,8 @@ def sdf_creator(filename):
     sdf_sinks.at[0, 'x'] = sdf_sinks.at[0, 'x'] - sdf_sinks.at[0, 'x']
     sdf_sinks.at[0, 'y'] = sdf_sinks.at[0, 'y'] - sdf_sinks.at[0, 'y']
 
+    #sdf['rho-gcm'] = sdf['rho']*scaling
+
     return sdf, sdf_sinks
 
 
@@ -50,7 +52,7 @@ def plot_sinks(ax, sdf_sinks):
     y_sink_1 = sdf_sinks.at[1, 'y']
 
     ax.scatter(x=x_sink_0, y=y_sink_0, color='skyblue', s=10)
-    ax.scatter(x=x_sink_1, y=y_sink_1, color='red', s=10)
+    ax.scatter(x=x_sink_1, y=y_sink_1, color='white', s=10)
 
 
 # function to truncated colour maps
@@ -76,13 +78,13 @@ cmap_dust = truncate_cmap('Blues_r')
 
 def subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
     if SECTIONAL_VIEW:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(-300, 300), ylim=(-300, 300), log_scale=True, xsec=0.00,
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=False, xsec=0.00, norm=LogNorm(3.6e-12, 1e-8),
                                             cmap='hot', ax=ax, cbar=cbar)
 
 
     else:
-        render = sdf[sdf.itype == 1].render('rho', xlim=(-300, 300), ylim=(-300, 300), log_scale=True,
-                                            cmap='hot', ax=ax, cbar=cbar)
+        render = sdf[sdf.itype == 1].render('rho', xlim=(- 300, 300), ylim=(-300, 300), log_scale=False, norm=LogNorm(3.6e-11, 1e-5),
+                                            cmap='hot', ax=ax,cbar=cbar)
     plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     if ax.images:
@@ -100,8 +102,7 @@ def subplot_dust1(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        sdf['rho_cg'] = sdf['rho'].to_numpy()*SCALING
-        ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=True,
+        ax = sdf[sdf.itype == 7].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False, norm=LogNorm(1e-11, 1.e-7),
                                         cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
         plot_sinks(ax, sdf_sinks=sdf_sinks) 
         
@@ -122,7 +123,7 @@ def subplot_dust2(sdf, sdf_sinks, SECTIONAL_VIEW, ax, cbar):
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 
     else:
-        ax = sdf[sdf.itype == 8].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=True,
+        ax = sdf[sdf.itype == 8].render('rho', xlim=(-150, 150), ylim=(-150, 150), log_scale=False,norm=LogNorm(1e-11, 1e-7),
                                         cmap='hot', ax = ax, cbar = cbar, cbar_kws = {})
         plot_sinks(ax, sdf_sinks=sdf_sinks)
 

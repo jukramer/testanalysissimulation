@@ -107,18 +107,18 @@ def processData(sdf, sdf_sinks):
 def calcSigma(sdf, n, rIn, rOut):
     rVals = np.linspace(rIn, rOut, n).tolist()
     sigmaVals = []
-    
+    area = []
     try:
         for i, r in enumerate(rVals):
             sdfFilt = sdf[sdf['r'].between(r, rVals[i+1])]
             m = np.sum(sdfFilt['mass'].to_numpy())
             A = np.pi*(rVals[i+1]**2 - r**2)
             sigmaVals.append(m/A)
-            
+            area.append(A)
     except IndexError:
         pass
     
-    return rVals[:-1], sigmaVals
+    return rVals[:-1], sigmaVals, area
 
        
 def azimuthBin(sdf, col, nBins):
