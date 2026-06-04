@@ -100,14 +100,13 @@ def processData(sdf, sdf_sinks):
     return sdf
 
 
-def dropPart(sdf):
-    partIDs = []
-    sdf['r-km'] = sdf['r']*1.496e8
-    sdf['v-kms'] = sdf['v']*1.496e8/(2*np.pi*3600*24*365)
-    sdf['E'] = -GRAV_PARAM/sdf['r-km'] + 0.5*sdf['v-kms']**2
-   
-    return sdf['E']
+def dropPartIdx(sdf0: pd.DataFrame, sdf1: pd.DataFrame):
+    # Drop unbound particles
+    idx0 = sdf0.index.to_list()
+    idx1 = sdf1.index.to_list()
 
+    return [i for i in idx0 if i not in idx1]
+    
        
 def azimuthBin(sdf, col, nBins):
     azimuthBins = np.linspace(-np.pi, np.pi, nBins + 1, True)
@@ -124,9 +123,9 @@ def azimuthBin(sdf, col, nBins):
     return partIDs
 
 
-def trackPart(orbitType, struct, rVals, nSnapTrack, nAzimuthBins=50, avg=True):
+def trackPart(orbitType, struct: str, rVals, nSnapTrack, nAzimuthBins=50, avg=True):
     assert struct.lower() in {'gas', 'dust'}
-    assert len(rVals) == 2 and (type(rVals) == tuple or type(rVals) == list)
+    assert len(rVals) == 2 and type(rVals) in {list, tuple}
     
     rMin, rMax = rVals
     
@@ -142,24 +141,25 @@ def trackPart(orbitType, struct, rVals, nSnapTrack, nAzimuthBins=50, avg=True):
     _, sdfTrack1, sdfTrack2, _ = loadData(files[nSnapTrack+1])
     sdfTrack1 = sdfTrack1[(sdfTrack1['r'] > rMin) & (sdfTrack1['r'] < rMax)]
     sdfTrack2 = sdfTrack2[(sdfTrack2['r'] > rMin) & (sdfTrack2['r'] < rMax)]
+    
+    # Find indices of dropped particles
+    _, sdfDrop1, sdfDrop2, _ = loadData(files[-1])
+    dropIdx1 = dropPartIdx(sdfTrack1, sdfDrop1)
+    dropIdx2 = dropPartIdx(sdfTrack2, sdfDrop2)
+    sdfTrack1 = sdfTrack1.drop(dropIdx1)
+    sdfTrack2 = sdfTrack2.drop(dropIdx2)
+    
+    # Binning
     idx1 = azimuthBin(sdfTrack1, col, nAzimuthBins)
     idx2 = azimuthBin(sdfTrack2, col, nAzimuthBins)
-    # print('Idx1: ', idx1)
-    # print('Idx2: ', idx2)
-    # print('DustTrack1 length:', len(sdfTrack1.index))
-    # print('DustTrack2 length:', len(sdfTrack2.index))
-    
+
     # Array dims: tracked values x particle x snapshot
     dust1Array = np.zeros((1, nAzimuthBins, 21))
     dust2Array = np.zeros((1, nAzimuthBins, 21))
-    # print(dust1Array.shape)
     
     for i in range(21):
         _, sdfDust1, sdfDust2, _ = loadData(f'{orbitType}/{orbitType}_000{i:02d}')
         print(f'\r{orbitType}: [{'▮'*(i)}{'-'*(20-i)} ]', end='')
-        # print('Snapshot ', i+1)
-        # print('Dust1 length: ', len(sdfDust1.index))
-        # print('Dust2 length: ', len(sdfDust2.index))
         dust1Array[:,:,i] = sdfDust1.loc[idx1, col].to_numpy().T
         dust2Array[:,:,i] = sdfDust2.loc[idx2, col].to_numpy().T     
             
@@ -172,8 +172,8 @@ def trackPart(orbitType, struct, rVals, nSnapTrack, nAzimuthBins=50, avg=True):
 
 def main():
     # %%
-    nSnapTrack = 12
-    plot = ['pro']
+    nSnapTrack = 11
+    plot = ['pro', 'retro', 'incl']
     struct = 'dust'
     
     # ================ Tracking
@@ -192,47 +192,40 @@ def main():
     # %matplotlib qt
     # ================ Plotting
     tVals = np.linspace(0, 1, 21)[:,np.newaxis]
-    ax: Axes
-    if 'pro' in plot:
-        fig, ax = plt.subplots()
-        ax.plot(tVals, trackArrPro1, color="#6495ed", lw=2.5)
-        ax.plot(tVals, trackArrPro2, color="#ff69b4", lw=2.5)
-        ax.hlines(1, -np.inf, np.inf, colors='red', linestyles='dashed')
-        ax.set_yscale('log')
-        ax.set_xlabel('time [scaled units]')
-        ax.legend(['St=10', 'St=1'])
-        if struct == 'dust':
-            ax.set_ylabel('dust to gas ratio [-]')
-        else: 
-            ax.set_ylabel('density [g/cm$^3$]')
-        plt.show()
+    ax1: Axes
+    ax2: Axes
+    fig1, ax1 = plt.subplots()
+    fig2, ax2 = plt.subplots()    
+    ax1.set_yscale('log')
+    ax1.set_xlabel('time [scaled units]')
+    ax2.set_yscale('log')
+    ax2.set_xlabel('time [scaled units]')
     
-    if 'retro' in plot:
-        fig, ax = plt.subplots()
-        fig.set_size_inches((12,8))
-        ax.plot(tVals, trackArrRetro1)
-        ax.plot(tVals, trackArrRetro2)
-        ax.set_yscale('log')
-        ax.set_xlabel('time [scaled units]')
-        ax.legend(['St=10', 'St=1'])
-        if struct == 'dust':
-            ax.set_ylabel('dust to gas ratio [-]')
-        else: 
-            ax.set_ylabel('density [g/cm$^3$]')
-        plt.show()
+    if struct == 'dust':
+        ax1.set_ylabel('dust to gas ratio [-]')
+        ax2.set_ylabel('dust to gas ratio [-]')
+    else: 
+        ax1.set_ylabel('density [g/cm$^3$]')
+        ax2.set_ylabel('density [g/cm$^3$]')
         
+    if 'pro' in plot:
+        ax1.plot(tVals, trackArrPro1, color="#ff69b4", lw=2.5)
+        ax2.plot(tVals, trackArrPro2, color="#ff69b4", lw=2.5)
+    if 'retro' in plot:
+        ax1.plot(tVals, trackArrRetro1, color="#6495ed", lw=2.5)
+        ax2.plot(tVals, trackArrRetro2, color="#6495ed", lw=2.5)
     if 'incl' in plot:
-        fig, ax = plt.subplots()
-        ax.plot(tVals, trackArrIncl1)
-        ax.plot(tVals, trackArrIncl2)
-        ax.set_yscale('log')
-        ax.set_xlabel('time [scaled units]')
-        ax.legend(['St=10', 'St=1'])
-        if struct == 'dust':
-            ax.set_ylabel('dust to gas ratio [-]')
-        else: 
-            ax.set_ylabel('density [g/cm$^3$]')
-        plt.show()        
+        ax1.plot(tVals, trackArrIncl1, color="#fca625", lw=2.5)
+        ax2.plot(tVals, trackArrIncl2, color="#fca625", lw=2.5)
+        
+    ax1.axhline(1, color='black', lw=2, linestyle='dashed')
+    ax2.axhline(1, color='black', lw=2, linestyle='dashed')
+    ax1.legend(['Prograde', 'Retrograde', 'Inclined'])
+    ax2.legend(['Prograde', 'Retrograde', 'Inclined'])
+    
+    plt.show()
+        
+    
 # %%
 if __name__ == '__main__':
     main()
