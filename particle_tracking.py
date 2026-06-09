@@ -106,7 +106,7 @@ def dropPartIdx(sdf0: pd.DataFrame, sdf1: pd.DataFrame):
     idx1 = sdf1.index.to_list()
 
     return [i for i in idx0 if i not in idx1]
-    
+
        
 def azimuthBin(sdf, col, nBins):
     azimuthBins = np.linspace(-np.pi, np.pi, nBins + 1, True)
@@ -115,6 +115,7 @@ def azimuthBin(sdf, col, nBins):
     try:
         for i in range(nBins+1):
             sdfFilt = sdf[sdf['theta'].between(azimuthBins[i], azimuthBins[i+1])]
+            print(sdfFilt[col])
             partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
             
     except IndexError:
@@ -136,19 +137,19 @@ def trackPart(orbitType, struct: str, rVals, nSnapTrack, nAzimuthBins=50, avg=Tr
         
     # Find files
     files = findFiles(orbitType, f'{orbitType}_')
-    
+
     # Load corresponding sdf
     _, sdfTrack1, sdfTrack2, _ = loadData(files[nSnapTrack+1])
     sdfTrack1 = sdfTrack1[(sdfTrack1['r'] > rMin) & (sdfTrack1['r'] < rMax)]
     sdfTrack2 = sdfTrack2[(sdfTrack2['r'] > rMin) & (sdfTrack2['r'] < rMax)]
-    
+
     # Find indices of dropped particles
     _, sdfDrop1, sdfDrop2, _ = loadData(files[-1])
     dropIdx1 = dropPartIdx(sdfTrack1, sdfDrop1)
     dropIdx2 = dropPartIdx(sdfTrack2, sdfDrop2)
     sdfTrack1 = sdfTrack1.drop(dropIdx1)
     sdfTrack2 = sdfTrack2.drop(dropIdx2)
-    
+
     # Binning
     idx1 = azimuthBin(sdfTrack1, col, nAzimuthBins)
     idx2 = azimuthBin(sdfTrack2, col, nAzimuthBins)
@@ -156,12 +157,12 @@ def trackPart(orbitType, struct: str, rVals, nSnapTrack, nAzimuthBins=50, avg=Tr
     # Array dims: tracked values x particle x snapshot
     dust1Array = np.zeros((1, nAzimuthBins, 21))
     dust2Array = np.zeros((1, nAzimuthBins, 21))
-    
+
     for i in range(21):
         _, sdfDust1, sdfDust2, _ = loadData(f'{orbitType}/{orbitType}_000{i:02d}')
         print(f'\r{orbitType}: [{'▮'*(i)}{'-'*(20-i)} ]', end='')
         dust1Array[:,:,i] = sdfDust1.loc[idx1, col].to_numpy().T
-        dust2Array[:,:,i] = sdfDust2.loc[idx2, col].to_numpy().T     
+        dust2Array[:,:,i] = sdfDust2.loc[idx2, col].to_numpy().T
             
     if avg:
         # averages amongst all particles    
@@ -187,7 +188,7 @@ def main():
         trackArrIncl1, trackArrIncl2 = list(trackPart('incl_30', struct, (35, np.inf), nSnapTrack)[0])
         trackArrIncl1, trackArrIncl2 = trackArrIncl1.T, trackArrIncl2.T
     # trackArrIncl = trackPart('incl_30', 'dust',(35, np.inf), nSnapTrack)[0][1].T
-    
+
     # %%
     # %matplotlib qt
     # ================ Plotting
@@ -195,19 +196,19 @@ def main():
     ax1: Axes
     ax2: Axes
     fig1, ax1 = plt.subplots()
-    fig2, ax2 = plt.subplots()    
+    fig2, ax2 = plt.subplots()
     ax1.set_yscale('log')
     ax1.set_xlabel('time [scaled units]')
     ax2.set_yscale('log')
     ax2.set_xlabel('time [scaled units]')
-    
+
     if struct == 'dust':
         ax1.set_ylabel('dust to gas ratio [-]')
         ax2.set_ylabel('dust to gas ratio [-]')
-    else: 
+    else:
         ax1.set_ylabel('density [g/cm$^3$]')
         ax2.set_ylabel('density [g/cm$^3$]')
-        
+
     if 'pro' in plot:
         ax1.plot(tVals, trackArrPro1, color="#ff69b4", lw=2.5)
         ax2.plot(tVals, trackArrPro2, color="#ff69b4", lw=2.5)
@@ -217,15 +218,15 @@ def main():
     if 'incl' in plot:
         ax1.plot(tVals, trackArrIncl1, color="#fca625", lw=2.5)
         ax2.plot(tVals, trackArrIncl2, color="#fca625", lw=2.5)
-        
+
     ax1.axhline(1, color='black', lw=2, linestyle='dashed')
     ax2.axhline(1, color='black', lw=2, linestyle='dashed')
     ax1.legend(['Prograde', 'Retrograde', 'Inclined'])
     ax2.legend(['Prograde', 'Retrograde', 'Inclined'])
-    
+
     plt.show()
-        
-    
+
+
 # %%
 if __name__ == '__main__':
     main()
