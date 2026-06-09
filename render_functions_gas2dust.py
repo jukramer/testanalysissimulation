@@ -146,8 +146,8 @@ def subplot_dust2gas(sdfGas, sdfDust, sdf_sinks, ax, cbar=False):
 
     ax.clear()
 
-    print('Gas min:', np.nanmin(gas_img))
-    print('Gas max:', np.nanmax(gas_img))
+    #print('Gas min:', np.nanmin(gas_img))
+    # print('Gas max:', np.nanmax(gas_img))
 
     dust_render = sdfDust.render(
         'rho',
@@ -161,8 +161,8 @@ def subplot_dust2gas(sdfGas, sdfDust, sdf_sinks, ax, cbar=False):
     dust_img = dust_render.images[0].get_array().copy()
 
     ax.clear()
-    print('Dust min:', np.nanmin(dust_img))
-    print('Dust max:', np.nanmax(dust_img))
+    # print('Dust min:', np.nanmin(dust_img))
+    # print('Dust max:', np.nanmax(dust_img))
 
     gas_floor = gas_img.max() * 1e-5
 
@@ -172,8 +172,9 @@ def subplot_dust2gas(sdfGas, sdfDust, sdf_sinks, ax, cbar=False):
 
     ratio[mask] = dust_img[mask] / gas_img[mask]
 
-    print("Ratio min:", np.nanmin(ratio))
-    print("Ratio max:", np.nanmax(ratio))
+    # print("Ratio min:", np.nanmin(ratio))
+    # print("Ratio max:", np.nanmax(ratio))
+
 
     im = ax.imshow(
         ratio,

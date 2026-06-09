@@ -39,9 +39,9 @@ color = ['cornflowerblue', 'navajowhite', 'tab:green']
 for i in range(len(Snapshots)):
     for j in range(len(encounter)):
         sdfGas, sdfDust1, sdfDust2, sdf_sinks = loadData(f'{encounter[j]}/{encounter[j]}_000{Snapshots[i]}')
-        rVals, sigmaValsgas, area = calcSigma(sdfGas, n=20, rIn=10, rOut=85)
-        rVals, sigmaValsdust1, area = calcSigma(sdfDust1, n=20, rIn=10, rOut=85)
-        rVals, sigmaValsdust2, area = calcSigma(sdfDust2, n=20, rIn=10, rOut=85)
+        rVals, sigmaValsgas, area = calcSigma(sdfGas, n=25, rIn=10, rOut=150)
+        rVals, sigmaValsdust1, area = calcSigma(sdfDust1, n=25, rIn=10, rOut=150)
+        rVals, sigmaValsdust2, area = calcSigma(sdfDust2, n=25, rIn=10, rOut=150)
 
         sigmaValsgas = np.array(sigmaValsgas)
         sigmaValsdust1 = np.array(sigmaValsdust1)
@@ -54,8 +54,9 @@ for i in range(len(Snapshots)):
     plt.yscale('log')
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
-    plt.title(f'Dust-to-gas ratio profile at t={Snapshots[i] * 0.05:.2f}', fontsize=19)
+    #plt.title(f'Dust-to-gas ratio profile at t={Snapshots[i] * 0.05:.2f}', fontsize=19)
     plt.xlabel('Radius [AU]', fontsize=16)
-    plt.ylabel('Dust-to-gas ratio', fontsize=16)
-    plt.legend(fontsize=16)
+    plt.ylabel('Dust-to-gas ratio [-]', fontsize=16)
+    plt.legend(fontsize=12)
+    plt.tight_layout()
     plt.show()

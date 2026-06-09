@@ -131,6 +131,9 @@ for i in range(n_rows):  # encounters
 
         #render = subplot_dust2gas(sdfDust, sdf_sinks, ax=ax, cbar=False)
         render = subplot_dust2gas(sdfGas, sdfDust, sdf_sinks, ax=ax, cbar=False)
+        ax.set_xlim(-150, 150)
+        ax.set_ylim(-150, 150)
+        ax.set_aspect('equal', adjustable='box')
 
         xmin, xmax = ax.get_xlim()
         ymin, ymax = ax.get_ylim()
