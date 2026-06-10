@@ -1,131 +1,212 @@
+import math
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import LogFormatterExponent
 from matplotlib.gridspec import GridSpec
-from render_functions import sdf_creator, subplot_gas
-from particle_tracking import trackPart, loadData
-
-n_rows = 1
-n_cols = 3
-
-encounter       = ['prograde', 'retrograde', 'incl_30']
-encounter_names = ['Prograde', 'Retrograde', 'Inclined 30°']
-snapshot        = 12
-nSnapTrack      = 12
-N_PART          = 50   # max tracked particles (= nAzimuthBins)
-
-SECTIONAL_VIEW = False
-scale          = 600   # AU, for the scale label
-
-fig = plt.figure(figsize=(10, 4), facecolor='white')
-
-gs = GridSpec(
-    n_rows, n_cols + 1,
-    figure=fig,
-    width_ratios=[1] * n_cols + [0.08],
-    wspace=0.01,
-    hspace=0.1,
+from render_functions import sdf_creator, subplot_dust1, subplot_dust2, subplot_gas
+from tracking_plot_config import (
+    PLOT_SPECS,
+    SECTIONAL_VIEW,
+    TRACKING_DATA_FILE,
+    encounter,
+    encounter_names,
+    n_cols,
+    n_rows,
+    row_names,
+    snapshot_filepath,
+    tracking_key,
+    zoom_limits,
 )
 
-axes = np.empty((n_rows, n_cols), dtype=object)
-for j in range(n_cols):
-    axes[0, j] = fig.add_subplot(gs[0, j])
+NORM_LIMITS = {
+    'gas': {
+        'prograde': (3.6e-11, 1e-6),
+        'retrograde': (3.6e-11, 1e-6),
+        'incl_30': (3.6e-11, 1e-6),
+    },
+    'dust1': {
+        'prograde': (1e-11, 1e-6),
+        'retrograde': (1e-11, 1e-6),
+        'incl_30': (1e-11, 1e-6),
+    },
+    'dust2': {
+        'prograde': (1e-11, 1e-6),
+        'retrograde': (1e-11, 1e-6),
+        'incl_30': (1e-11, 1e-6),
+    },
+}
 
-cax               = fig.add_subplot(gs[0, -1])
-mappable_for_cbar = None
-
-for j, enc in enumerate(encounter):
-    ax       = axes[0, j]
-    filepath = f'{enc}/{enc}_000{snapshot}'
-
-    # ── Gas background ────────────────────────────────────────────────────────
-    sdf, sdf_sinks = sdf_creator(filepath)
-    render = subplot_gas(sdf, sdf_sinks, SECTIONAL_VIEW=SECTIONAL_VIEW,
-                         ax=ax, cbar=False)
-    ax.set_xlim(-300, 300)
-    ax.set_ylim(-300, 300)
-    ax.set_aspect('equal', adjustable='box')
-
-    # ── Tracked particle indices at nSnapTrack ────────────────────────────────
-    # trackPart is expensive (loops all 20 snapshots) but idx1/idx2 are what
-    # we need; the returned value array is discarded here.
-    _, idx1, idx2 = trackPart(enc, 'dust', (50, np.inf), nSnapTrack,
-                               nAzimuthBins=N_PART)
-
-    # ── Dust positions at snapshot 12 ─────────────────────────────────────────
-    # loadData re-centres positions the same way sdf_creator does, so x/y are
-    # in the same frame as the gas render.
-    _, sdfDust1, sdfDust2, _ = loadData(filepath)
-
-    # Guard: only keep indices that actually exist in the loaded frame
-    valid1 = [i for i in idx1[:N_PART] if i in sdfDust1.index]
-    valid2 = [i for i in idx2[:N_PART] if i in sdfDust2.index]
-
-    x1 = sdfDust1.loc[valid1, 'x'].to_numpy()
-    y1 = sdfDust1.loc[valid1, 'y'].to_numpy()
-    x2 = sdfDust2.loc[valid2, 'x'].to_numpy()
-    y2 = sdfDust2.loc[valid2, 'y'].to_numpy()
-
-    # render_plots_tracking.py — dust position extraction
-    _, sdfDust1, sdfDust2, _ = loadData(filepath)
-
-    x1 = sdfDust1['x'].reindex(idx1[:N_PART]).to_numpy()
-    y1 = sdfDust1['y'].reindex(idx1[:N_PART]).to_numpy()
-    x2 = sdfDust2['x'].reindex(idx2[:N_PART]).to_numpy()
-    y2 = sdfDust2['y'].reindex(idx2[:N_PART]).to_numpy()
-
-    # ── Overlay scatter ───────────────────────────────────────────────────────
-
-    # Drop NaN positions before scattering (particles absent at this snapshot)
-    mask1 = ~np.isnan(x1) & ~np.isnan(y1)
-    mask2 = ~np.isnan(x2) & ~np.isnan(y2)
-
-    ax.scatter(x1[mask1], y1[mask1], s=8, c='cyan', marker='o',
-               alpha=0.85, linewidths=0, zorder=5, label='$St = 10$')
-    ax.scatter(x2[mask2], y2[mask2], s=8, c='purple', marker='o',
-               alpha=0.85, linewidths=0, zorder=5, label='$St = 1$')
+ROW_STRUCT_MAP = ['gas', 'dust1', 'dust2']
 
 
-    # ── Cosmetics ─────────────────────────────────────────────────────────────
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_xlabel('')
-    ax.set_ylabel('')
-    ax.set_title(encounter_names[j], fontsize=12, color='black')
+def load_tracking_data(cache_filename=TRACKING_DATA_FILE):
+    try:
+        with np.load(cache_filename) as data:
+            return {key: data[key] for key in data.files}
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(
+            f'Missing {cache_filename}. Run save_tracking_data.py first.'
+        ) from exc
 
-    # Scale bar label (leftmost panel only)
-    if j == 0:
-        xmin, xmax = ax.get_xlim()
-        ymin, ymax = ax.get_ylim()
-        ax.text(xmax - 0.9 * (xmax - xmin),
-                ymin + 0.1 * (ymax - ymin),
-                f'{scale} AU', color='white', fontsize=8)
 
-    # Legend on the first panel only
-    if j == 0:
-        ax.legend(loc='upper right', fontsize=7, framealpha=0.5,
-                  markerscale=1.5, labelcolor='white', facecolor='#111111',
-                  edgecolor='none', bbox_to_anchor=(0.98, 0.98))
+def make_tracking_plot(snapshot, time_label, output_filename, tracking_data):
+    fig = plt.figure(figsize=(11, 10), facecolor='white')
 
-    if mappable_for_cbar is None:
-        mappable_for_cbar = render
+    gs = GridSpec(
+        n_rows, n_cols + 1,
+        figure=fig,
+        width_ratios=[1] * n_cols + [0.05],
+        wspace=0.02,
+        hspace=0.05,
+    )
 
-# ── Shared colour bar ─────────────────────────────────────────────────────────
-cbar = fig.colorbar(mappable_for_cbar, cax=cax)
-cbar = fig.colorbar(mappable_for_cbar, cax=cax)
-pos = cax.get_position()
-cax.set_position([pos.x0 + 0.02, pos.y0, pos.width, pos.height])
+    axes = np.empty((n_rows, n_cols), dtype=object)
+    for i in range(n_rows):
+        for j in range(n_cols):
+            axes[i, j] = fig.add_subplot(gs[i, j])
 
-cbar.outline.set_edgecolor('black')
-cbar.outline.set_linewidth(1.5)
-cbar.set_label(r"Log Column Density [$M_\odot$/AU$^2$]", fontsize=12)
-cbar.ax.yaxis.label.set_color('black')
-cbar.ax.tick_params(colors='black')
-cbar.ax.yaxis.set_major_formatter(LogFormatterExponent())
+    cax = fig.add_subplot(gs[:, -1])
+    mappable_for_cbar = None
+    cbar_vmin = cbar_vmax = None
 
-fig.suptitle('Gas Density Distribution at t = 0.6', fontsize=16, color='black',  y=0.98)
-fig.subplots_adjust(top=0.85)
+    n_enc = len(encounter)
+    for j, enc in enumerate(encounter):
+        print(f'  [{j+1}/{n_enc}] Loading {enc}...', end=' ', flush=True)
+        filepath = snapshot_filepath(enc, snapshot)
 
-plt.savefig('gas_distr_t0.6.png', dpi=300, bbox_inches='tight',
-            facecolor='white')
-plt.show()
+        x1 = tracking_data[tracking_key(snapshot, enc, 'x1')]
+        y1 = tracking_data[tracking_key(snapshot, enc, 'y1')]
+        x2 = tracking_data[tracking_key(snapshot, enc, 'x2')]
+        y2 = tracking_data[tracking_key(snapshot, enc, 'y2')]
+
+        mask1 = ~np.isnan(x1) & ~np.isnan(y1)
+        mask2 = ~np.isnan(x2) & ~np.isnan(y2)
+        sdf, sdf_sinks = sdf_creator(filepath)
+
+        row_funcs = [subplot_gas, subplot_dust1, subplot_dust2]
+        scatter_specs = [
+            [(x1, y1, mask1, 'cyan', '$St = 10$'), (x2, y2, mask2, 'lime', '$St = 1$')],
+            [(x1, y1, mask1, 'cyan', '$St = 10$')],
+            [(x2, y2, mask2, 'lime', '$St = 1$')],
+        ]
+
+        for i in range(n_rows):
+            print(f'panel [{i+1}/{n_rows}]', end=' ', flush=True)
+            ax = axes[i, j]
+            struct_key = ROW_STRUCT_MAP[i]
+            vmin, vmax = NORM_LIMITS[struct_key][enc]
+
+            render = row_funcs[i](sdf, sdf_sinks, SECTIONAL_VIEW, ax, False, vmin=vmin, vmax=vmax)
+
+            if render is not None:
+                render.set_clim(vmin, vmax)
+
+            for sx, sy, smask, sc, slab in scatter_specs[i]:
+                ax.scatter(
+                    sx[smask], sy[smask],
+                    s=8, c=sc, marker='o', alpha=0.85,
+                    linewidths=0, zorder=5, label=slab,
+                )
+
+            xmin, xmax, ymin, ymax = zoom_limits[i][enc]
+            ax.set_xlim(xmin, xmax)
+            ax.set_ylim(ymin, ymax)
+            ax.set_aspect('equal', adjustable='box')
+
+            ax.set_xticks([])
+            ax.set_yticks([])
+            ax.set_xlabel('')
+            ax.set_ylabel('')
+
+            if i == 0:
+                ax.set_title(encounter_names[j], fontsize=12, color='black')
+
+            if j == 0:
+                ax.text(
+                    -0.26,
+                    0.5,
+                    row_names[i],
+                    transform=ax.transAxes,
+                    rotation=90,
+                    va='center',
+                    ha='center',
+                    fontsize=12,
+                    color='black',
+                )
+
+            scale = int(xmax - xmin)
+            ax.text(
+                xmin + 0.10 * (xmax - xmin),
+                ymin + 0.10 * (ymax - ymin),
+                f'{scale} AU',
+                color='white',
+                fontsize=8,
+            )
+
+            if j == 0:
+                ax.legend(
+                    loc='upper right',
+                    fontsize=7,
+                    framealpha=0.5,
+                    markerscale=1.5,
+                    labelcolor='white',
+                    facecolor='#111111',
+                    edgecolor='none',
+                    bbox_to_anchor=(0.98, 0.98),
+                )
+
+            if mappable_for_cbar is None and render is not None:
+                mappable_for_cbar = render
+                cbar_vmin, cbar_vmax = vmin, vmax
+
+        print(f'[{j+1}/{n_enc}] {enc} done', flush=True)
+
+    if mappable_for_cbar is not None:
+        log_vmin = math.ceil(math.log10(cbar_vmin))
+        log_vmax = math.floor(math.log10(cbar_vmax))
+        tick_vals = [10**i for i in range(log_vmin, log_vmax + 1)]
+        tick_labels = [f'$10^{{{i}}}$' for i in range(log_vmin, log_vmax + 1)]
+        cbar = fig.colorbar(mappable_for_cbar, cax=cax)
+        cbar.set_ticks(tick_vals)
+        cbar.set_ticklabels(tick_labels)
+        cbar.outline.set_edgecolor('black')
+        cbar.outline.set_linewidth(1.5)
+        cbar.ax.yaxis.label.set_color('black')
+        cbar.ax.tick_params(colors='black', labelsize=10)
+        cbar.solids.set_alpha(0.85)
+        cbar.set_label(r"Log Column Density [$M_\odot$/AU$^2$]", fontsize=12)
+
+    print('  Saving...', end=' ', flush=True)
+    fig.suptitle(
+        f'Tracked Dust Particles on Gas and Dust Structures at t = {time_label}',
+        fontsize=16,
+        color='black',
+        y=0.98,
+    )
+
+    fig.subplots_adjust(top=0.92)
+
+    plt.savefig(
+        output_filename,
+        dpi=300,
+        bbox_inches='tight',
+        facecolor='white',
+    )
+
+    plt.close(fig)
+    print('done', flush=True)
+
+
+if __name__ == '__main__':
+    tracking_data = load_tracking_data()
+    n_specs = len(PLOT_SPECS)
+    for idx, spec in enumerate(PLOT_SPECS):
+        print(f'[{idx+1}/{n_specs}] Snapshot {spec["snapshot"]} (t={spec["time_label"]})')
+        make_tracking_plot(
+            snapshot=spec['snapshot'],
+            time_label=spec['time_label'],
+            output_filename=spec['output_filename'],
+            tracking_data=tracking_data,
+        )
+        print(f'[{idx+1}/{n_specs}] Snapshot {spec["snapshot"]} finished')
+        sys.stdout.flush()

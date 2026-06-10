@@ -21,7 +21,7 @@ RHO_SCALING = 1.988475e33 / (14959787070000)**3
 
 
 def findFiles(dir, name):
-    return [str(p) for p in pb.Path(dir).rglob(f'*{name}*')]
+    return sorted(str(p) for p in pb.Path(dir).rglob(f'*{name}*') if p.is_file())
 
 
 def loadData(filepath):
@@ -115,7 +115,7 @@ def azimuthBin(sdf, col, nBins):
     try:
         for i in range(nBins+1):
             sdfFilt = sdf[sdf['theta'].between(azimuthBins[i], azimuthBins[i+1])]
-            print(sdfFilt[col])
+    #        print(sdfFilt[col])
             partIDs.append(sdfFilt.index[sdfFilt[col] == sdfFilt[col].max(skipna=True)].tolist()[0])
             
     except IndexError:
@@ -137,6 +137,13 @@ def trackPart(orbitType, struct: str, rVals, nSnapTrack, nAzimuthBins=50, avg=Tr
         
     # Find files
     files = findFiles(orbitType, f'{orbitType}_')
+    if not files:
+        raise FileNotFoundError(f'No snapshot files matching {orbitType}_ found in {orbitType}')
+    if nSnapTrack + 1 >= len(files):
+        raise IndexError(
+            f'nSnapTrack={nSnapTrack} selects file index {nSnapTrack + 1}, '
+            f'but {orbitType} only has {len(files)} snapshots.'
+        )
 
     # Load corresponding sdf
     _, sdfTrack1, sdfTrack2, _ = loadData(files[nSnapTrack+1])
@@ -155,18 +162,30 @@ def trackPart(orbitType, struct: str, rVals, nSnapTrack, nAzimuthBins=50, avg=Tr
     idx2 = azimuthBin(sdfTrack2, col, nAzimuthBins)
 
     # Array dims: tracked values x particle x snapshot
-    dust1Array = np.zeros((1, nAzimuthBins, 21))
-    dust2Array = np.zeros((1, nAzimuthBins, 21))
+    nSnapshots = len(files)
+    dust1Array = np.full((1, len(idx1), nSnapshots), np.nan)
+    dust2Array = np.full((1, len(idx2), nSnapshots), np.nan)
 
-    for i in range(21):
-        _, sdfDust1, sdfDust2, _ = loadData(f'{orbitType}/{orbitType}_000{i:02d}')
-        print(f'\r{orbitType}: [{'▮'*(i)}{'-'*(20-i)} ]', end='')
-        dust1Array[:,:,i] = sdfDust1.loc[idx1, col].to_numpy().T
-        dust2Array[:,:,i] = sdfDust2.loc[idx2, col].to_numpy().T
+    for i, file in enumerate(files):
+        _, sdfDust1, sdfDust2, _ = loadData(file)
+        filled = int(round(20 * (i + 1) / nSnapshots))
+        print(f'\r{orbitType}: [{"#" * filled}{"-" * (20 - filled)} ]', end='')
+        dust1Array[:, :, i] = sdfDust1.reindex(idx1)[col].to_numpy()
+        dust2Array[:, :, i] = sdfDust2.reindex(idx2)[col].to_numpy()
             
     if avg:
-        # averages amongst all particles    
-        return np.vstack([np.mean(dust1Array, 1, keepdims=True), np.mean(dust2Array, 1, keepdims=True)]), idx1, idx2
+        # averages amongst all particles
+        dust1Mean = (
+            np.full((1, 1, nSnapshots), np.nan)
+            if dust1Array.shape[1] == 0
+            else np.nanmean(dust1Array, 1, keepdims=True)
+        )
+        dust2Mean = (
+            np.full((1, 1, nSnapshots), np.nan)
+            if dust2Array.shape[1] == 0
+            else np.nanmean(dust2Array, 1, keepdims=True)
+        )
+        return np.vstack([dust1Mean, dust2Mean]), idx1, idx2
     else:
         return np.vstack([dust1Array, dust2Array]), idx1, idx2
 # %%
